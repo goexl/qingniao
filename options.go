@@ -1,12 +1,14 @@
 package una
 
 type options struct {
-	// 过期时间
-	smsType SmsType
+	// 短信配置
+	sms sms
+	// 创世云授权配置
+	akSk akSk
+	// 主题，邮件使用
+	subject string
 }
 
 func defaultOptions() *options {
-	return &options{
-		smsType: SmsTypeCommon,
-	}
+	return &options{}
 }

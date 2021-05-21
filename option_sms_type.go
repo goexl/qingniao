@@ -3,30 +3,39 @@ package una
 var _ option = (*optionSmsType)(nil)
 
 type optionSmsType struct {
-	smsType SmsType
+	sms sms
 }
 
 // CommonSms 配置普通短信
-func CommonSms() *optionSmsType {
+func CommonSms(target string) *optionSmsType {
 	return &optionSmsType{
-		smsType: SmsTypeCommon,
+		sms: sms{
+			Type:    SmsTypeCommon,
+			targets: []string{target},
+		},
 	}
 }
 
-// CommonNotify 配置通知短信
-func CommonNotify() *optionSmsType {
+// NotifySms 配置通知短信
+func NotifySms(target string) *optionSmsType {
 	return &optionSmsType{
-		smsType: SmsTypeNotify,
+		sms: sms{
+			Type:    SmsTypeNotify,
+			targets: []string{target},
+		},
 	}
 }
 
-// CommonAdvertising 配置营销（广告）短信
-func CommonAdvertising() *optionSmsType {
+// AdvertisingSms 配置营销（广告）短信
+func AdvertisingSms(targets ...string) *optionSmsType {
 	return &optionSmsType{
-		smsType: SmsTypeAdvertising,
+		sms: sms{
+			Type:    SmsTypeAdvertising,
+			targets: targets,
+		},
 	}
 }
 
 func (b *optionSmsType) apply(options *options) {
-	options.smsType = b.smsType
+	options.sms = b.sms
 }
