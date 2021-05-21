@@ -22,16 +22,14 @@ type ChuangcacheSms struct {
 }
 
 // NewChuangcacheSms 创建创世云短信
-func NewChuangcacheSms(resty *resty.Request) (chuangcache *ChuangcacheSms, err error) {
-	chuangcache = &ChuangcacheSms{
+func NewChuangcacheSms(resty *resty.Request) (chuangcache *ChuangcacheSms) {
+	return &ChuangcacheSms{
 		resty:      resty,
 		tokenCache: sync.Map{},
 
 		apiEndpoint: "https://api.chuangcache.com",
 		smsEndpoint: "https://sms.chuangcache.com/api/sms",
 	}
-
-	return
 }
 
 func (cs *ChuangcacheSms) Send(_ context.Context, content string, opts ...option) (id string, err error) {
