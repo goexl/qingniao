@@ -21,7 +21,7 @@ func New(config Config, resty *resty.Request) (una Una, err error) {
 
 	switch config.Type {
 	case TypeChuangcache:
-		una, err = NewChuangcacheSms(config.ChuangcacheSms, resty)
+		una = NewChuangcacheSms(resty)
 	}
 
 	return

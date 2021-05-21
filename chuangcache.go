@@ -22,7 +22,7 @@ type ChuangcacheSms struct {
 }
 
 // NewChuangcacheSms 创建创世云短信
-func NewChuangcacheSms(resty *resty.Request) (chuangcache *ChuangcacheSms) {
+func NewChuangcacheSms(resty *resty.Request) *ChuangcacheSms {
 	return &ChuangcacheSms{
 		resty:      resty,
 		tokenCache: sync.Map{},
