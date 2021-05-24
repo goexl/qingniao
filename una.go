@@ -14,12 +14,12 @@ type Una interface {
 }
 
 // New 创建适配器
-func New(tpe Type, validate *validatorx.Validate, resty *resty.Request) (una Una, err error) {
-	if err = validate.Var(tpe, "required,oneof=email chuangcache"); nil != err {
+func New(unaType Type, validate *validatorx.Validate, resty *resty.Request) (una Una, err error) {
+	if err = validate.Var(unaType, "required,oneof=email chuangcache"); nil != err {
 		return
 	}
 
-	switch tpe {
+	switch unaType {
 	case TypeChuangcache:
 		una = NewChuangcache(validate, resty)
 	case TypeEmail:

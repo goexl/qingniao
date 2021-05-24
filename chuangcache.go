@@ -34,20 +34,20 @@ func NewChuangcache(validate *validatorx.Validate, resty *resty.Request) *Chuang
 	}
 }
 
-func (cs *Chuangcache) Send(_ context.Context, content string, opts ...option) (id string, err error) {
+func (c *Chuangcache) Send(_ context.Context, content string, opts ...option) (id string, err error) {
 	options := defaultOptions()
 	for _, opt := range opts {
 		opt.apply(options)
 	}
-	if err = cs.validate.Var(content, "required,max=536"); nil != err {
+	if err = c.validate.Var(content, "required,max=536"); nil != err {
 		return
 	}
-	if err = cs.validate.Struct(options.chuangcache); nil != err {
+	if err = c.validate.Struct(options.chuangcache); nil != err {
 		return
 	}
 
 	var token string
-	if token, err = cs.refreshToken(options); nil != err {
+	if token, err = c.refreshToken(options); nil != err {
 		return
 	}
 
@@ -75,8 +75,8 @@ func (cs *Chuangcache) Send(_ context.Context, content string, opts ...option) (
 	}
 
 	rsp := new(chuangcacheSmsResponse)
-	url := fmt.Sprintf("%s/%s", cs.smsEndpoint, "ordinary")
-	if _, err = cs.resty.SetBody(req).SetResult(rsp).Post(url); nil != err {
+	url := fmt.Sprintf("%s/%s", c.smsEndpoint, "ordinary")
+	if _, err = c.resty.SetBody(req).SetResult(rsp).Post(url); nil != err {
 		return
 	}
 	id = rsp.SendId
@@ -84,7 +84,7 @@ func (cs *Chuangcache) Send(_ context.Context, content string, opts ...option) (
 	return
 }
 
-func (cs *Chuangcache) refreshToken(options *options) (token string, err error) {
+func (c *Chuangcache) refreshToken(options *options) (token string, err error) {
 	var (
 		cache interface{}
 		ok    bool
@@ -92,7 +92,7 @@ func (cs *Chuangcache) refreshToken(options *options) (token string, err error) 
 
 	key := options.chuangcache.key()
 	// 检查AccessToken是否可以
-	if cache, ok = cs.tokenCache.Load(key); ok {
+	if cache, ok = c.tokenCache.Load(key); ok {
 		var validate bool
 		if token, validate = cache.(*chuangcacheToken).validate(); validate {
 			return
@@ -105,13 +105,13 @@ func (cs *Chuangcache) refreshToken(options *options) (token string, err error) 
 		Sk: options.chuangcache.sk,
 	}
 	rsp := new(chuangcacheTokenResponse)
-	url := fmt.Sprintf("%s/%s", cs.apiEndpoint, "OAuth/authorize")
-	if _, err = cs.resty.SetBody(req).SetResult(rsp).Post(url); nil != err {
+	url := fmt.Sprintf("%s/%s", c.apiEndpoint, "OAuth/authorize")
+	if _, err = c.resty.SetBody(req).SetResult(rsp).Post(url); nil != err {
 		return
 	}
 
 	token = rsp.Data.AccessToken
-	cs.tokenCache.Store(key, &chuangcacheToken{
+	c.tokenCache.Store(key, &chuangcacheToken{
 		token:     token,
 		expiresIn: time.Now().Add(time.Duration(1000 * rsp.Data.ExpiresIn)),
 	})
