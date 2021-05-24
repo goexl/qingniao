@@ -18,7 +18,7 @@ type emailConfig struct {
 	// 邮件主题
 	subject string `validate:"required"`
 	// 发送人
-	from string `validate:"required,emailConfig"`
+	from string `validate:"required"`
 	// 发送地址列表
 	to []string `validate:"required,dive,email"`
 	// 抄送列表
