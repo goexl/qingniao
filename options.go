@@ -12,7 +12,9 @@ type options struct {
 	// 池数量
 	poolSize int
 	// 是否是模板
-	isTemplate bool
+	template bool
+	// 模板数据
+	data interface{}
 }
 
 func defaultOptions() *options {
@@ -24,7 +26,7 @@ func defaultOptions() *options {
 			port:      465,
 			emailType: EmailTypeHtml,
 		},
-		poolSize:   runtime.NumCPU() + 1,
-		isTemplate: false,
+		poolSize: runtime.NumCPU() + 1,
+		template: false,
 	}
 }

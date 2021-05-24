@@ -15,21 +15,26 @@ import (
 type Email struct {
 	validate  *validatorx.Validate
 	poolCache sync.Map
+
+	template unaTemplate
 }
 
 // NewEmail 创建普通邮件
-func NewEmail(validate *validatorx.Validate) *Email {
-	return &Email{
+func NewEmail(validate *validatorx.Validate) (email *Email) {
+	email = &Email{
 		validate:  validate,
 		poolCache: sync.Map{},
 	}
+	email.template = unaTemplate{implementer: email}
+
+	return
 }
 
-func (e *Email) Send(_ context.Context, content string, opts ...option) (id string, err error) {
-	options := defaultOptions()
-	for _, opt := range opts {
-		opt.apply(options)
-	}
+func (e *Email) Send(ctx context.Context, content string, opts ...option) (id string, err error) {
+	return e.template.Send(ctx, content, opts...)
+}
+
+func (e *Email) send(_ context.Context, content string, options *options) (id string, err error) {
 	if err = e.validate.Struct(options.email); nil != err {
 		return
 	}

@@ -20,11 +20,13 @@ type Chuangcache struct {
 
 	apiEndpoint string
 	smsEndpoint string
+
+	template unaTemplate
 }
 
 // NewChuangcache 创建创世云短信
-func NewChuangcache(validate *validatorx.Validate, resty *resty.Request) *Chuangcache {
-	return &Chuangcache{
+func NewChuangcache(validate *validatorx.Validate, resty *resty.Request) (chuangcache *Chuangcache) {
+	chuangcache = &Chuangcache{
 		validate:   validate,
 		resty:      resty,
 		tokenCache: sync.Map{},
@@ -32,13 +34,16 @@ func NewChuangcache(validate *validatorx.Validate, resty *resty.Request) *Chuang
 		apiEndpoint: "https://api.chuangcache.com",
 		smsEndpoint: "https://sms.chuangcache.com/api/sms",
 	}
+	chuangcache.template = unaTemplate{implementer: chuangcache}
+
+	return
 }
 
-func (c *Chuangcache) Send(_ context.Context, content string, opts ...option) (id string, err error) {
-	options := defaultOptions()
-	for _, opt := range opts {
-		opt.apply(options)
-	}
+func (c *Chuangcache) Send(ctx context.Context, content string, opts ...option) (id string, err error) {
+	return c.template.Send(ctx, content, opts...)
+}
+
+func (c *Chuangcache) send(_ context.Context, content string, options *options) (id string, err error) {
 	if err = c.validate.Var(content, "required,max=536"); nil != err {
 		return
 	}
