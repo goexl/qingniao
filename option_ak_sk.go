@@ -3,19 +3,21 @@ package una
 var _ option = (*optionAkSk)(nil)
 
 type optionAkSk struct {
-	akSk akSk
+	// 授权，相当于用户名
+	ak string
+	// 授权，相当于密码
+	sk string
 }
 
-// AkSk 配置创世云授权
+// AkSk 配置邮件服务
 func AkSk(ak string, sk string) *optionAkSk {
 	return &optionAkSk{
-		akSk: akSk{
-			ak: ak,
-			sk: sk,
-		},
+		ak: ak,
+		sk: sk,
 	}
 }
 
 func (as *optionAkSk) apply(options *options) {
-	options.akSk = as.akSk
+	options.chuangcacheSms.ak = as.ak
+	options.chuangcacheSms.sk = as.sk
 }

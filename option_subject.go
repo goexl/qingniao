@@ -14,5 +14,5 @@ func Subject(subject string) *optionSubject {
 }
 
 func (b *optionSubject) apply(options *options) {
-	options.mail.subject = b.subject
+	options.email.subject = b.subject
 }

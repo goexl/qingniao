@@ -14,5 +14,5 @@ func CC(emails ...string) *optionCC {
 }
 
 func (as *optionCC) apply(options *options) {
-	options.mail.cc = as.cc
+	options.email.cc = as.cc
 }

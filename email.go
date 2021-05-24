@@ -13,12 +13,14 @@ import (
 
 // Email 邮件通知
 type Email struct {
+	validate  validatorx.Validate
 	poolCache sync.Map
 }
 
 // NewEmail 创建普通邮件
-func NewEmail() *Email {
+func NewEmail(validate validatorx.Validate) *Email {
 	return &Email{
+		validate:  validate,
 		poolCache: sync.Map{},
 	}
 }
@@ -28,7 +30,7 @@ func (e *Email) Send(_ context.Context, content string, opts ...option) (id stri
 	for _, opt := range opts {
 		opt.apply(options)
 	}
-	if err = validatorx.Validate(options.mail); nil != err {
+	if err = e.validate.Struct(options.email); nil != err {
 		return
 	}
 
@@ -38,18 +40,18 @@ func (e *Email) Send(_ context.Context, content string, opts ...option) (id stri
 	}
 
 	em := email.NewEmail()
-	em.From = "Jordan Wright <test@gmail.com>"
-	em.To = options.mail.to
-	em.Bcc = options.mail.bcc
-	em.Cc = options.mail.cc
-	em.Subject = options.mail.subject
-	switch options.mail.emailType {
+	em.From = options.email.from
+	em.To = options.email.to
+	em.Bcc = options.email.bcc
+	em.Cc = options.email.cc
+	em.Subject = options.email.subject
+	switch options.email.emailType {
 	case EmailTypeHtml:
-		em.HTML = []byte("<h1>Fancy HTML is supported, too!</h1>")
+		em.HTML = []byte(content)
 	case EmailTypePlain:
-		em.Text = []byte("Text Body is, of course, supported!")
+		em.Text = []byte(content)
 	default:
-		em.HTML = []byte("<h1>Fancy HTML is supported, too!</h1>")
+		em.HTML = []byte(content)
 	}
 	err = pool.Send(em, 10*time.Second)
 
@@ -62,7 +64,7 @@ func (e *Email) getPool(options *options) (pool *email.Pool, err error) {
 		ok    bool
 	)
 
-	key := options.mail.key()
+	key := options.email.key()
 	if cache, ok = e.poolCache.Load(key); ok {
 		pool = cache.(*email.Pool)
 
@@ -70,9 +72,9 @@ func (e *Email) getPool(options *options) (pool *email.Pool, err error) {
 	}
 
 	if pool, err = email.NewPool(
-		fmt.Sprintf("%s:%d", options.mail.host, options.mail.port),
+		fmt.Sprintf("%s:%d", options.email.host, options.email.port),
 		options.poolSize,
-		smtp.PlainAuth("", options.mail.username, options.mail.password, options.mail.host),
+		smtp.PlainAuth("", options.email.username, options.email.password, options.email.host),
 	); nil != err {
 		return
 	}

@@ -14,7 +14,7 @@ type optionEmailContent struct {
 	// 邮件类型
 	emailType EmailType `validate:"required,oneof=html plain"`
 	// 发送地址列表
-	to []string `validate:"required,dive,mail"`
+	to []string `validate:"required,dive,emailConfig"`
 }
 
 // HtmlEmail 配置富文本邮件
@@ -26,8 +26,17 @@ func HtmlEmail(name string, from string, to ...string) *optionEmailContent {
 	}
 }
 
+// PlainEmail 配置普通邮件
+func PlainEmail(name string, from string, to ...string) *optionEmailContent {
+	return &optionEmailContent{
+		from:      fmt.Sprintf("%s <%s>", name, from),
+		emailType: EmailTypePlain,
+		to:        to,
+	}
+}
+
 func (as *optionEmailContent) apply(options *options) {
-	options.mail.from = as.from
-	options.mail.emailType = as.emailType
-	options.mail.to = as.to
+	options.email.from = as.from
+	options.email.emailType = as.emailType
+	options.email.to = as.to
 }

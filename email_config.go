@@ -4,7 +4,7 @@ import (
 	`fmt`
 )
 
-type mail struct {
+type emailConfig struct {
 	// 邮箱地址
 	host string `validate:"required"`
 	// 端口
@@ -18,7 +18,7 @@ type mail struct {
 	// 邮件主题
 	subject string `validate:"required"`
 	// 发送人
-	from string `validate:"required,mail"`
+	from string `validate:"required,emailConfig"`
 	// 发送地址列表
 	to []string `validate:"required,dive,email"`
 	// 抄送列表
@@ -27,6 +27,6 @@ type mail struct {
 	bcc []string `validate:"omitempty,dive,email"`
 }
 
-func (m *mail) key() string {
-	return fmt.Sprintf("%s-%s-%s", m.host, m.username, m.password)
+func (ec *emailConfig) key() string {
+	return fmt.Sprintf("%s-%s", ec.host, ec.username)
 }

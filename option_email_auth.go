@@ -23,9 +23,9 @@ func EmailAuth(host string, port int, username string, password string) *optionE
 	}
 }
 
-func (as *optionEmailAuth) apply(options *options) {
-	options.mail.host = as.host
-	options.mail.port = as.port
-	options.mail.username = as.username
-	options.mail.password = as.password
+func (a *optionEmailAuth) apply(options *options) {
+	options.email.host = a.host
+	options.email.port = a.port
+	options.email.username = a.username
+	options.email.password = a.password
 }

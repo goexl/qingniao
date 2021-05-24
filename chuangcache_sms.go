@@ -14,6 +14,7 @@ import (
 
 // ChuangcacheSms 创世云短信
 type ChuangcacheSms struct {
+	validate   *validatorx.Validate
 	resty      *resty.Request
 	tokenCache sync.Map
 
@@ -22,8 +23,9 @@ type ChuangcacheSms struct {
 }
 
 // NewChuangcacheSms 创建创世云短信
-func NewChuangcacheSms(resty *resty.Request) *ChuangcacheSms {
+func NewChuangcacheSms(validate *validatorx.Validate, resty *resty.Request) *ChuangcacheSms {
 	return &ChuangcacheSms{
+		validate:   validate,
 		resty:      resty,
 		tokenCache: sync.Map{},
 
@@ -37,7 +39,10 @@ func (cs *ChuangcacheSms) Send(_ context.Context, content string, opts ...option
 	for _, opt := range opts {
 		opt.apply(options)
 	}
-	if err = validatorx.Validate(options.akSk); nil != err {
+	if err = cs.validate.Var(content, "required,max=536"); nil != err {
+		return
+	}
+	if err = cs.validate.Struct(options.chuangcacheSms); nil != err {
 		return
 	}
 
@@ -48,20 +53,20 @@ func (cs *ChuangcacheSms) Send(_ context.Context, content string, opts ...option
 
 	baseReq := baseChuangcacheSmsRequest{
 		AccessToken: token,
-		AppKey:      options.akSk.ak,
-		Mobile:      strings.Join(options.sms.mobiles, ","),
+		AppKey:      options.chuangcacheSms.ak,
+		Mobile:      strings.Join(options.chuangcacheSms.mobiles, ","),
 		Content:     content,
 		Time:        strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	var req interface{}
-	switch options.sms.smsType {
+	switch options.chuangcacheSms.smsType {
 	case SmsTypeCommon:
 		fallthrough
 	case SmsTypeNotify:
 		req = chuangcacheOrdinaryRequest{
 			baseChuangcacheSmsRequest: baseReq,
-			SmsType:                   int(options.sms.smsType),
+			SmsType:                   int(options.chuangcacheSms.smsType),
 		}
 	case SmsTypeAdvertising:
 		req = chuangcacheAdvertisingRequest{
@@ -84,8 +89,10 @@ func (cs *ChuangcacheSms) refreshToken(options *options) (token string, err erro
 		cache interface{}
 		ok    bool
 	)
+
+	key := options.chuangcacheSms.key()
 	// 检查AccessToken是否可以
-	if cache, ok = cs.tokenCache.Load(options.akSk.key()); ok {
+	if cache, ok = cs.tokenCache.Load(key); ok {
 		var validate bool
 		if token, validate = cache.(*chuangcacheToken).validate(); validate {
 			return
@@ -94,8 +101,8 @@ func (cs *ChuangcacheSms) refreshToken(options *options) (token string, err erro
 
 	// 更新Token
 	req := chuangcacheTokenRequest{
-		Ak: options.akSk.ak,
-		Sk: options.akSk.sk,
+		Ak: options.chuangcacheSms.ak,
+		Sk: options.chuangcacheSms.sk,
 	}
 	rsp := new(chuangcacheTokenResponse)
 	url := fmt.Sprintf("%s/%s", cs.apiEndpoint, "OAuth/authorize")
@@ -104,7 +111,7 @@ func (cs *ChuangcacheSms) refreshToken(options *options) (token string, err erro
 	}
 
 	token = rsp.Data.AccessToken
-	cs.tokenCache.Store(options.akSk.key(), &chuangcacheToken{
+	cs.tokenCache.Store(key, &chuangcacheToken{
 		token:     token,
 		expiresIn: time.Now().Add(time.Duration(1000 * rsp.Data.ExpiresIn)),
 	})
