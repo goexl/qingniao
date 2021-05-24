@@ -9,6 +9,7 @@ func init() {
 
 	if err := app.Sets(
 		NewChuangcacheSms,
+		NewEmail,
 		New,
 	); nil != err {
 		panic(err)

@@ -13,12 +13,12 @@ import (
 
 // Email 邮件通知
 type Email struct {
-	validate  validatorx.Validate
+	validate  *validatorx.Validate
 	poolCache sync.Map
 }
 
 // NewEmail 创建普通邮件
-func NewEmail(validate validatorx.Validate) *Email {
+func NewEmail(validate *validatorx.Validate) *Email {
 	return &Email{
 		validate:  validate,
 		poolCache: sync.Map{},
