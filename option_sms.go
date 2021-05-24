@@ -32,6 +32,6 @@ func AdvertisingSms(targets ...string) *optionSms {
 }
 
 func (s *optionSms) apply(options *options) {
-	options.chuangcacheSms.smsType = s.smsType
-	options.chuangcacheSms.mobiles = s.mobiles
+	options.chuangcache.smsType = s.smsType
+	options.chuangcache.mobiles = s.mobiles
 }

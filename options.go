@@ -6,7 +6,7 @@ import (
 
 type options struct {
 	// 短信配置
-	chuangcacheSms chuangcacheSmsConfig
+	chuangcache chuangcacheConfig
 	// 邮件配置
 	email emailConfig
 	// 池数量
@@ -15,7 +15,7 @@ type options struct {
 
 func defaultOptions() *options {
 	return &options{
-		chuangcacheSms: chuangcacheSmsConfig{
+		chuangcache: chuangcacheConfig{
 			smsType: SmsTypeCommon,
 		},
 		email: emailConfig{

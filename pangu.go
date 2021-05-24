@@ -8,7 +8,7 @@ func init() {
 	app := pangu.New()
 
 	if err := app.Sets(
-		NewChuangcacheSms,
+		NewChuangcache,
 		NewEmail,
 		New,
 	); nil != err {

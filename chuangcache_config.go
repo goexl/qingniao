@@ -4,7 +4,7 @@ import (
 	`fmt`
 )
 
-type chuangcacheSmsConfig struct {
+type chuangcacheConfig struct {
 	// 授权，相当于用户名
 	ak string `validate:"required"`
 	// 授权，相当于密码
@@ -15,6 +15,6 @@ type chuangcacheSmsConfig struct {
 	mobiles []string `validate:"required,dive,mobile"`
 }
 
-func (csc *chuangcacheSmsConfig) key() string {
-	return fmt.Sprintf("%s-%s", csc.ak, csc.sk)
+func (cc *chuangcacheConfig) key() string {
+	return fmt.Sprintf("%s-%s", cc.ak, cc.sk)
 }

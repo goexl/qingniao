@@ -21,7 +21,7 @@ func New(tpe Type, validate *validatorx.Validate, resty *resty.Request) (una Una
 
 	switch tpe {
 	case TypeChuangcache:
-		una = NewChuangcacheSms(validate, resty)
+		una = NewChuangcache(validate, resty)
 	case TypeEmail:
 		una = NewEmail(validate)
 	}
