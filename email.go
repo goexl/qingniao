@@ -2,31 +2,25 @@ package una
 
 import (
 	`context`
+	`fmt`
 	`net/smtp`
-	`strings`
+	`sync`
+	`time`
 
+	`github.com/jordan-wright/email`
 	`github.com/storezhang/validatorx`
 )
 
-type (
-	// Email 邮件通知
-	Email struct{}
-
-	email struct {
-		// 邮箱地址
-		host string `validate:"required"`
-		// 用户名
-		username string `validate:"required"`
-		// 密码
-		password string `validate:"required"`
-		// 邮件类型
-		emailType EmailType `validate:"required,oneof=html plain"`
-	}
-)
+// Email 邮件通知
+type Email struct {
+	poolCache sync.Map
+}
 
 // NewEmail 创建普通邮件
 func NewEmail() *Email {
-	return &Email{}
+	return &Email{
+		poolCache: sync.Map{},
+	}
 }
 
 func (e *Email) Send(_ context.Context, content string, opts ...option) (id string, err error) {
@@ -34,22 +28,55 @@ func (e *Email) Send(_ context.Context, content string, opts ...option) (id stri
 	for _, opt := range opts {
 		opt.apply(options)
 	}
-	if err = validatorx.Validate(options.email); nil != err {
+	if err = validatorx.Validate(options.mail); nil != err {
 		return
 	}
 
-	auth := smtp.PlainAuth("", options.email.username, options.email.password, options.email.host)
-	var contentType string
-	switch options.email.emailType {
-	case EmailTypePlain:
-		contentType = "Content-Type: text/plain" + "; charset=UTF-8"
-	case EmailTypeHtml:
-		contentType = "Content-Type: text/html" + "; charset=UTF-8"
+	var pool *email.Pool
+	if pool, err = e.getPool(options); nil != err {
+		return
 	}
 
-	msg := []byte("To: " + to + "\r\nFrom: " + sendUserName + "<" + user + ">" + "\r\nSubject: " + subject + "\r\n" + content_type + "\r\n\r\n" + body)
-	send_to := strings.Split(to, ";")
-	err = smtp.SendMail(options.email.host, auth, user, send_to, msg)
+	em := email.NewEmail()
+	em.From = "Jordan Wright <test@gmail.com>"
+	em.To = options.mail.to
+	em.Bcc = options.mail.bcc
+	em.Cc = options.mail.cc
+	em.Subject = options.mail.subject
+	switch options.mail.emailType {
+	case EmailTypeHtml:
+		em.HTML = []byte("<h1>Fancy HTML is supported, too!</h1>")
+	case EmailTypePlain:
+		em.Text = []byte("Text Body is, of course, supported!")
+	default:
+		em.HTML = []byte("<h1>Fancy HTML is supported, too!</h1>")
+	}
+	err = pool.Send(em, 10*time.Second)
+
+	return
+}
+
+func (e *Email) getPool(options *options) (pool *email.Pool, err error) {
+	var (
+		cache interface{}
+		ok    bool
+	)
+
+	key := options.mail.key()
+	if cache, ok = e.poolCache.Load(key); ok {
+		pool = cache.(*email.Pool)
+
+		return
+	}
+
+	if pool, err = email.NewPool(
+		fmt.Sprintf("%s:%d", options.mail.host, options.mail.port),
+		options.poolSize,
+		smtp.PlainAuth("", options.mail.username, options.mail.password, options.mail.host),
+	); nil != err {
+		return
+	}
+	e.poolCache.Store(key, pool)
 
 	return
 }

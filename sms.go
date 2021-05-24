@@ -1,6 +1,8 @@
 package una
 
 type sms struct {
-	Type    SmsType
-	targets []string
+	// 短信类型
+	smsType SmsType `validate:"required,oneof=1 2 3"`
+	// 手机号列表
+	mobiles []string `validate:"required,dive,mobile"`
 }

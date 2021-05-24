@@ -33,32 +33,35 @@ func NewChuangcacheSms(resty *resty.Request) *ChuangcacheSms {
 }
 
 func (cs *ChuangcacheSms) Send(_ context.Context, content string, opts ...option) (id string, err error) {
-	appliedOptions := defaultOptions()
+	options := defaultOptions()
 	for _, opt := range opts {
-		opt.apply(appliedOptions)
+		opt.apply(options)
+	}
+	if err = validatorx.Validate(options.akSk); nil != err {
+		return
 	}
 
 	var token string
-	if token, err = cs.refreshToken(appliedOptions); nil != err {
+	if token, err = cs.refreshToken(options); nil != err {
 		return
 	}
 
 	baseReq := baseChuangcacheSmsRequest{
 		AccessToken: token,
-		AppKey:      appliedOptions.akSk.ak,
-		Mobile:      strings.Join(appliedOptions.sms.targets, ","),
+		AppKey:      options.akSk.ak,
+		Mobile:      strings.Join(options.sms.mobiles, ","),
 		Content:     content,
 		Time:        strconv.FormatInt(time.Now().Unix(), 10),
 	}
 
 	var req interface{}
-	switch appliedOptions.sms.Type {
+	switch options.sms.smsType {
 	case SmsTypeCommon:
 		fallthrough
 	case SmsTypeNotify:
 		req = chuangcacheOrdinaryRequest{
 			baseChuangcacheSmsRequest: baseReq,
-			SmsType:                   int(appliedOptions.sms.Type),
+			SmsType:                   int(options.sms.smsType),
 		}
 	case SmsTypeAdvertising:
 		req = chuangcacheAdvertisingRequest{
@@ -77,10 +80,6 @@ func (cs *ChuangcacheSms) Send(_ context.Context, content string, opts ...option
 }
 
 func (cs *ChuangcacheSms) refreshToken(options *options) (token string, err error) {
-	if err = validatorx.Validate(options.akSk); nil != err {
-		return
-	}
-
 	var (
 		cache interface{}
 		ok    bool
