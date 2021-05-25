@@ -13,16 +13,14 @@ import (
 
 // Email 邮件通知
 type Email struct {
-	validate  *validatorx.Validate
 	poolCache sync.Map
 
 	template unaTemplate
 }
 
 // NewEmail 创建普通邮件
-func NewEmail(validate *validatorx.Validate) (email *Email) {
+func NewEmail() (email *Email) {
 	email = &Email{
-		validate:  validate,
 		poolCache: sync.Map{},
 	}
 	email.template = unaTemplate{email: email}
@@ -35,7 +33,7 @@ func (e *Email) Send(ctx context.Context, content string, opts ...option) (id st
 }
 
 func (e *Email) send(_ context.Context, content string, options *options) (id string, err error) {
-	if err = e.validate.Struct(options.email); nil != err {
+	if err = validatorx.Struct(options.email); nil != err {
 		return
 	}
 

@@ -14,7 +14,6 @@ import (
 
 // Chuangcache 创世云短信
 type Chuangcache struct {
-	validate   *validatorx.Validate
 	resty      *resty.Request
 	tokenCache sync.Map
 
@@ -25,9 +24,8 @@ type Chuangcache struct {
 }
 
 // NewChuangcache 创建创世云短信
-func NewChuangcache(validate *validatorx.Validate, resty *resty.Request) (chuangcache *Chuangcache) {
+func NewChuangcache(resty *resty.Request) (chuangcache *Chuangcache) {
 	chuangcache = &Chuangcache{
-		validate:   validate,
 		resty:      resty,
 		tokenCache: sync.Map{},
 
@@ -44,10 +42,10 @@ func (c *Chuangcache) Send(ctx context.Context, content string, opts ...option) 
 }
 
 func (c *Chuangcache) send(_ context.Context, content string, options *options) (id string, err error) {
-	if err = c.validate.Var(content, "required,max=536"); nil != err {
+	if err = validatorx.Var(content, "required,max=536"); nil != err {
 		return
 	}
-	if err = c.validate.Struct(options.chuangcache); nil != err {
+	if err = validatorx.Struct(options.chuangcache); nil != err {
 		return
 	}
 
