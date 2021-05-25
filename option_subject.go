@@ -13,6 +13,6 @@ func Subject(subject string) *optionSubject {
 	}
 }
 
-func (b *optionSubject) apply(options *options) {
-	options.email.subject = b.subject
+func (s *optionSubject) apply(options *options) {
+	options.email.subject = s.subject
 }

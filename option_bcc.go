@@ -13,6 +13,6 @@ func BCC(emails ...string) *optionBCC {
 	}
 }
 
-func (as *optionBCC) apply(options *options) {
-	options.email.bcc = as.bcc
+func (bcc *optionBCC) apply(options *options) {
+	options.email.bcc = bcc.bcc
 }

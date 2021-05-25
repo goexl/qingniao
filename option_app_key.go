@@ -14,6 +14,6 @@ func AppKey(key string) *optionAppKey {
 	}
 }
 
-func (as *optionAppKey) apply(options *options) {
-	options.chuangcache.appKey = as.key
+func (ak *optionAppKey) apply(options *options) {
+	options.chuangcache.appKey = ak.key
 }

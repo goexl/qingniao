@@ -13,6 +13,6 @@ func CC(emails ...string) *optionCC {
 	}
 }
 
-func (as *optionCC) apply(options *options) {
-	options.email.cc = as.cc
+func (cc *optionCC) apply(options *options) {
+	options.email.cc = cc.cc
 }

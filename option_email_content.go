@@ -35,8 +35,8 @@ func PlainEmail(name string, from string, to ...string) *optionEmailContent {
 	}
 }
 
-func (as *optionEmailContent) apply(options *options) {
-	options.email.from = as.from
-	options.email.emailType = as.emailType
-	options.email.to = as.to
+func (ec *optionEmailContent) apply(options *options) {
+	options.email.from = ec.from
+	options.email.emailType = ec.emailType
+	options.email.to = ec.to
 }
