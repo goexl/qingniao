@@ -58,7 +58,7 @@ func (c *Chuangcache) send(_ context.Context, content string, options *options) 
 
 	baseReq := baseChuangcacheSmsRequest{
 		AccessToken: token,
-		AppKey:      options.chuangcache.ak,
+		AppKey:      options.chuangcache.appKey,
 		Mobile:      strings.Join(options.chuangcache.mobiles, ","),
 		Content:     content,
 		Time:        strconv.FormatInt(time.Now().Unix(), 10),

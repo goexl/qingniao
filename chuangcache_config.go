@@ -9,6 +9,8 @@ type chuangcacheConfig struct {
 	ak string `validate:"required"`
 	// 授权，相当于密码
 	sk string `validate:"required"`
+	// 应用
+	appKey string `validate:"required"`
 	// 短信类型
 	smsType SmsType `validate:"required,oneof=1 2 3"`
 	// 手机号列表
