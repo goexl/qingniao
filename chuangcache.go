@@ -34,7 +34,7 @@ func NewChuangcache(validate *validatorx.Validate, resty *resty.Request) (chuang
 		apiEndpoint: "https://api.chuangcache.com",
 		smsEndpoint: "https://sms.chuangcache.com/api/sms",
 	}
-	chuangcache.template = unaTemplate{implementer: chuangcache}
+	chuangcache.template = unaTemplate{chuangcache: chuangcache}
 
 	return
 }

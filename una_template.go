@@ -7,7 +7,8 @@ import (
 )
 
 type unaTemplate struct {
-	implementer unaInternal
+	email       unaInternal
+	chuangcache unaInternal
 }
 
 func (t *unaTemplate) Send(ctx context.Context, content string, opts ...option) (id string, err error) {
@@ -31,7 +32,12 @@ func (t *unaTemplate) Send(ctx context.Context, content string, opts ...option) 
 		content = buffer.String()
 	}
 
-	id, err = t.implementer.send(ctx, content, options)
+	switch options.unaType {
+	case TypeEmail:
+		id, err = t.email.send(ctx, content, options)
+	case TypeChuangcache:
+		id, err = t.chuangcache.send(ctx, content, options)
+	}
 
 	return
 }

@@ -20,4 +20,5 @@ func AkSk(ak string, sk string) *optionAkSk {
 func (as *optionAkSk) apply(options *options) {
 	options.chuangcache.ak = as.ak
 	options.chuangcache.sk = as.sk
+	options.unaType = TypeChuangcache
 }

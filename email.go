@@ -25,7 +25,7 @@ func NewEmail(validate *validatorx.Validate) (email *Email) {
 		validate:  validate,
 		poolCache: sync.Map{},
 	}
-	email.template = unaTemplate{implementer: email}
+	email.template = unaTemplate{email: email}
 
 	return
 }

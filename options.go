@@ -15,6 +15,9 @@ type options struct {
 	template bool
 	// 模板数据
 	data interface{}
+
+	// 类型
+	unaType Type
 }
 
 func defaultOptions() *options {
@@ -28,5 +31,6 @@ func defaultOptions() *options {
 		},
 		poolSize: runtime.NumCPU() + 1,
 		template: false,
+		unaType:  TypeEmail,
 	}
 }

@@ -28,4 +28,5 @@ func (a *optionEmailAuth) apply(options *options) {
 	options.email.port = a.port
 	options.email.username = a.username
 	options.email.password = a.password
+	options.unaType = TypeEmail
 }
