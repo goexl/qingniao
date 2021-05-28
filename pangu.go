@@ -7,7 +7,7 @@ import (
 func init() {
 	app := pangu.New()
 
-	if err := app.Sets(
+	if err := app.Provides(
 		NewChuangcache,
 		NewEmail,
 		New,
