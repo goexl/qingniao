@@ -6,11 +6,7 @@ import (
 )
 
 func init() {
-	if err := pangu.New().Provides(
-		NewChuangcache,
-		NewEmail,
-		New,
-	); nil != err {
+	if err := pangu.New().Provides(NewChuangcache, NewEmail, New); nil != err {
 		panic(err)
 	}
 }
