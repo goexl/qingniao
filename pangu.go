@@ -2,12 +2,11 @@ package una
 
 import (
 	`github.com/storezhang/pangu`
+	_ `github.com/storezhang/pangu-http`
 )
 
 func init() {
-	app := pangu.New()
-
-	if err := app.Provides(
+	if err := pangu.New().Provides(
 		NewChuangcache,
 		NewEmail,
 		New,
