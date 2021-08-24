@@ -3,7 +3,6 @@ package una
 import (
 	`context`
 	`fmt`
-	`strconv`
 	`strings`
 	`sync`
 	`time`
@@ -59,7 +58,7 @@ func (c *Chuangcache) send(_ context.Context, content string, options *options) 
 		AppKey:      options.chuangcache.appKey,
 		Mobile:      strings.Join(options.chuangcache.mobiles, ","),
 		Content:     content,
-		Time:        strconv.FormatInt(time.Now().Unix(), 10),
+		Time:        fmt.Sprintf("%d", time.Now().UnixNano()/1e6),
 	}
 
 	var req interface{}
