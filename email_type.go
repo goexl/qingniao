@@ -1,11 +1,11 @@
-package una
+package qingniao
 
 const (
-	// EmailTypeHtml 富文本邮件
-	EmailTypeHtml EmailType = "html"
-	// EmailTypePlain 普通文本邮件
-	EmailTypePlain EmailType = "plain"
+	// emailTypeHtml 富文本邮件
+	emailTypeHtml emailType = "html"
+	// emailTypePlain 普通文本邮件
+	emailTypePlain emailType = "plain"
 )
 
-// EmailType 邮件类型
-type EmailType string
+// emailType 邮件类型
+type emailType string

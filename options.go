@@ -1,14 +1,14 @@
-package una
+package qingniao
 
 import (
-	`runtime`
+	"runtime"
 )
 
 type options struct {
 	// 短信配置
 	chuangcache chuangcacheConfig
 	// 邮件配置
-	email emailConfig
+	email emailDeliver
 	// 池数量
 	poolSize int
 	// 是否是模板
@@ -25,9 +25,9 @@ func defaultOptions() *options {
 		chuangcache: chuangcacheConfig{
 			smsType: SmsTypeCommon,
 		},
-		email: emailConfig{
-			port:      465,
-			emailType: EmailTypeHtml,
+		email: emailDeliver{
+			port: 465,
+			typ:  emailTypeHtml,
 		},
 		poolSize: runtime.NumCPU() + 1,
 		template: false,

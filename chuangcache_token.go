@@ -1,7 +1,7 @@
-package una
+package qingniao
 
 import (
-	`time`
+	"time"
 )
 
 type chuangcacheToken struct {
@@ -9,6 +9,6 @@ type chuangcacheToken struct {
 	expiresIn time.Time
 }
 
-func (ct *chuangcacheToken) validate() (token string, validate bool) {
-	return ct.token, time.Now().After(ct.expiresIn.Add(5 * time.Minute))
+func (ct *chuangcacheToken) validate() bool {
+	return time.Now().After(ct.expiresIn.Add(5 * time.Minute))
 }

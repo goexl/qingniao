@@ -1,46 +1,42 @@
-package una
+package qingniao
 
 import (
-	`context`
-	`fmt`
-	`strings`
-	`sync`
-	`time`
+	"context"
+	"fmt"
+	"strings"
+	"sync"
+	"time"
 
-	`github.com/go-resty/resty/v2`
-	`github.com/storezhang/validatorx`
+	"github.com/go-resty/resty/v2"
+	"github.com/storezhang/validatorx"
 )
 
-// Chuangcache 创世云短信
-type Chuangcache struct {
-	resty      *resty.Request
+var _ smsExecutor = (*chuangcache)(nil)
+
+type chuangcache struct {
+	http       *resty.Client
 	tokenCache sync.Map
 
+	ak          string
+	sk          string
 	apiEndpoint string
 	smsEndpoint string
-
-	template unaTemplate
+	token       *chuangcacheToken
 }
 
-// NewChuangcache 创建创世云短信
-func NewChuangcache(resty *resty.Request) (chuangcache *Chuangcache) {
-	chuangcache = &Chuangcache{
-		resty:      resty,
+func newChuangcache(ak string, sk string, http *resty.Client) *chuangcache {
+	return &chuangcache{
+		http:       http,
 		tokenCache: sync.Map{},
 
+		ak:          ak,
+		sk:          sk,
 		apiEndpoint: "https://api.chuangcache.com",
 		smsEndpoint: "https://sms.chuangcache.com/api/sms",
 	}
-	chuangcache.template = unaTemplate{chuangcache: chuangcache}
-
-	return
 }
 
-func (c *Chuangcache) Send(ctx context.Context, content string, opts ...option) (id string, err error) {
-	return c.template.Send(ctx, content, opts...)
-}
-
-func (c *Chuangcache) send(_ context.Context, content string, options *options) (id string, err error) {
+func (c *chuangcache) Send(ctx context.Context) (id string, err error) {
 	if err = validatorx.Var(content, "required,max=536"); nil != err {
 		return
 	}
@@ -49,7 +45,8 @@ func (c *Chuangcache) send(_ context.Context, content string, options *options) 
 	}
 
 	var token string
-	if token, err = c.refreshToken(options); nil != err {
+	baseReq := new(baseChuangcacheSmsRequest)
+	if token, err = c.getToken(ctx); nil != err {
 		return
 	}
 
@@ -78,45 +75,33 @@ func (c *Chuangcache) send(_ context.Context, content string, options *options) 
 
 	rsp := new(chuangcacheSmsResponse)
 	url := fmt.Sprintf("%s/%s", c.smsEndpoint, "ordinary")
-	if _, err = c.resty.SetBody(req).SetResult(rsp).Post(url); nil != err {
-		return
+	if _, err = c.http.R().SetContext(ctx).SetBody(req).SetResult(rsp).Post(url); nil == err {
+		id = rsp.SendId
 	}
-	id = rsp.SendId
 
 	return
 }
 
-func (c *Chuangcache) refreshToken(options *options) (token string, err error) {
-	var (
-		cache interface{}
-		ok    bool
-	)
-
-	key := options.chuangcache.key()
-	// 检查AccessToken是否可以
-	if cache, ok = c.tokenCache.Load(key); ok {
-		var validate bool
-		if token, validate = cache.(*chuangcacheToken).validate(); validate {
-			return
-		}
+func (c *chuangcache) getToken(ctx context.Context) (token string, err error) {
+	if nil != c.token && c.token.validate() {
+		token = c.token.token
 	}
-
-	// 更新Token
-	req := chuangcacheTokenRequest{
-		Ak: options.chuangcache.ak,
-		Sk: options.chuangcache.sk,
-	}
-	rsp := new(chuangcacheTokenResponse)
-	url := fmt.Sprintf("%s/%s", c.apiEndpoint, "OAuth/authorize")
-	if _, err = c.resty.SetBody(req).SetResult(rsp).Post(url); nil != err {
+	if "" != token {
 		return
 	}
 
-	token = rsp.Data.AccessToken
-	c.tokenCache.Store(key, &chuangcacheToken{
-		token:     token,
-		expiresIn: time.Now().Add(time.Duration(1000 * rsp.Data.ExpiresIn)),
-	})
+	req := chuangcacheTokenRequest{
+		Ak: c.ak,
+		Sk: c.sk,
+	}
+	rsp := new(chuangcacheTokenResponse)
+	url := fmt.Sprintf("%s/%s", c.apiEndpoint, "OAuth/authorize")
+	if _, err = c.http.R().SetContext(ctx).SetBody(req).SetResult(rsp).Post(url); nil == err {
+		c.token = new(chuangcacheToken)
+		c.token.token = rsp.Data.AccessToken
+		c.token.expiresIn = time.Now().Add(time.Duration(1000 * rsp.Data.ExpiresIn))
+		token = rsp.Data.AccessToken
+	}
 
 	return
 }

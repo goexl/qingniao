@@ -1,4 +1,4 @@
-package una
+package qingniao
 
 const (
 	// SmsTypeCommon 普通短信
