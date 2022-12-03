@@ -1,38 +1,24 @@
 package qingniao
 
 import (
-	"runtime"
+	"github.com/go-resty/resty/v2"
+	"github.com/goexl/simaqian"
 )
 
 type emailBuilder struct {
-	host     string
-	port     int
-	username string
-	password string
-	poolSize int
-	identity string
+	executor emailExecutor
+
+	http   *resty.Client
+	logger simaqian.Logger
 }
 
-func newEmailBuilder(host string, port int) *emailBuilder {
+func newEmailBuilder(http *resty.Client, logger simaqian.Logger) *emailBuilder {
 	return &emailBuilder{
-		host:     host,
-		port:     port,
-		poolSize: runtime.NumCPU() + 1,
+		http:   http,
+		logger: logger,
 	}
 }
 
-func (eb *emailBuilder) PoolSize(size int) *emailBuilder {
-	eb.poolSize = size
-
-	return eb
-}
-
-func (eb *emailBuilder) Identity(identity string) *emailBuilder {
-	eb.identity = identity
-
-	return eb
-}
-
-func (eb *emailBuilder) Build() (*Email, error) {
-	return newEmail(eb.host, eb.port, eb.username, eb.password, eb.identity, eb.poolSize)
+func (eb *emailBuilder) Direct(host string, port int) *directBuilder {
+	return newDirectBuilder(host, port, eb.logger)
 }

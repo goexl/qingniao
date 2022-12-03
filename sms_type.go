@@ -1,13 +1,13 @@
 package qingniao
 
 const (
-	// SmsTypeCommon 普通短信
-	SmsTypeCommon SmsType = 1
-	// SmsTypeNotify 通知短信
-	SmsTypeNotify SmsType = 2
-	// SmsTypeAdvertising 营销短信
-	SmsTypeAdvertising SmsType = 3
+	// 普通短信
+	smsTypeCommon smsType = iota
+	// 通知短信
+	smsTypeNotify
+	// 营销短信
+	smsTypeAdvertising
 )
 
-// SmsType 短信类型
-type SmsType int
+// smsType 短信类型
+type smsType uint

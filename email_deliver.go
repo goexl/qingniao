@@ -1,10 +1,8 @@
 package qingniao
 
 import (
+	"context"
 	"time"
-
-	"github.com/goexl/xiren"
-	"github.com/jordan-wright/email"
 )
 
 type emailDeliver struct {
@@ -17,41 +15,21 @@ type emailDeliver struct {
 	bcc     []string  `validate:"omitempty,dive,email"`
 	timeout time.Duration
 
-	pool *email.Pool
+	executor emailExecutor
 }
 
-func newEmailDeliver(from string, subject string, content string, pool *email.Pool) *emailDeliver {
+func newEmailDeliver(addr string, subject string, content string, executor emailExecutor) *emailDeliver {
 	return &emailDeliver{
-		subject: subject,
-		content: content,
-		from:    from,
-		pool:    pool,
-		timeout: 10 * time.Second,
+		subject:  subject,
+		content:  content,
+		to:       []string{addr},
+		executor: executor,
+		timeout:  10 * time.Second,
 	}
 }
 
-func (ed *emailDeliver) Send() (err error) {
-	if err = xiren.Struct(ed); nil != err {
-		return
-	}
-
-	em := email.NewEmail()
-	em.From = ed.from
-	em.To = ed.to
-	em.Bcc = ed.bcc
-	em.Cc = ed.cc
-	em.Subject = ed.subject
-	switch ed.typ {
-	case emailTypeHtml:
-		em.HTML = []byte(ed.content)
-	case emailTypePlain:
-		em.Text = []byte(ed.content)
-	default:
-		em.HTML = []byte(ed.content)
-	}
-	err = ed.pool.Send(em, ed.timeout)
-
-	return
+func (ed *emailDeliver) Send(ctx context.Context) (string, error) {
+	return ed.executor.send(ctx, ed)
 }
 
 func (ed *emailDeliver) From(from string) *emailDeliver {
@@ -60,20 +38,20 @@ func (ed *emailDeliver) From(from string) *emailDeliver {
 	return ed
 }
 
-func (ed *emailDeliver) To(to string) *emailDeliver {
-	ed.to = append(ed.to, to)
+func (ed *emailDeliver) To(to ...string) *emailDeliver {
+	ed.to = append(ed.to, to...)
 
 	return ed
 }
 
-func (ed *emailDeliver) Cc(cc string) *emailDeliver {
-	ed.cc = append(ed.cc, cc)
+func (ed *emailDeliver) Cc(cc ...string) *emailDeliver {
+	ed.cc = append(ed.cc, cc...)
 
 	return ed
 }
 
-func (ed *emailDeliver) Bcc(bcc string) *emailDeliver {
-	ed.bcc = append(ed.bcc, bcc)
+func (ed *emailDeliver) Bcc(bcc ...string) *emailDeliver {
+	ed.bcc = append(ed.bcc, bcc...)
 
 	return ed
 }

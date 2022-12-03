@@ -1,21 +1,16 @@
 package qingniao
 
-import (
-	"github.com/go-resty/resty/v2"
-)
-
 // Sms 短信
 type Sms struct {
-	http *resty.Client
+	executor smsExecutor
 }
 
-func newSms(client *resty.Client) *Sms {
+func newSms(executor smsExecutor) *Sms {
 	return &Sms{
-		http: client,
+		executor: executor,
 	}
 }
 
-func (s *Sms) To(phone string) *Sms {
-
-	return s
+func (s *Sms) To(mobile string, content string) *smsDeliver {
+	return newSmsDeliver(mobile, content, s.executor)
 }
