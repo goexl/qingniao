@@ -14,10 +14,21 @@ type Sender struct {
 }
 
 // New 创建发送者
-func New(http *resty.Client, logger simaqian.Logger) *Sender {
+func New(opts ...option) *Sender {
+	_options := defaultOptions()
+	for _, opt := range opts {
+		opt.apply(_options)
+	}
+	if nil == _options.http {
+		_options.http = resty.New()
+	}
+	if nil == _options.logger {
+		_options.logger = simaqian.Must()
+	}
+
 	return &Sender{
-		http:   http,
-		logger: logger,
+		http:   _options.http,
+		logger: _options.logger,
 	}
 }
 
