@@ -5,15 +5,17 @@ import (
 )
 
 type smsDeliver struct {
-	mobiles []string `validate:"required,dive,mobile"`
-	content string   `validate:"required,max=536"`
-	typ     smsType  `validate:"oneof=1 2 3"`
+	template string   `validate:"required"`
+	mobiles  []string `validate:"required,dive,mobile"`
+	content  string   `validate:"required,max=536"`
+	typ      smsType  `validate:"oneof=1 2"`
 
 	executor smsExecutor
 }
 
-func newSmsDeliver(mobile string, content string, executor smsExecutor) *smsDeliver {
+func newSmsDeliver(template string, mobile string, content string, executor smsExecutor) *smsDeliver {
 	return &smsDeliver{
+		template: template,
 		mobiles:  []string{mobile},
 		content:  content,
 		executor: executor,
@@ -26,6 +28,24 @@ func (sd *smsDeliver) To(mobiles ...string) *smsDeliver {
 	return sd
 }
 
-func (sd *smsDeliver) Send(ctx context.Context) (string, error) {
+func (sd *smsDeliver) Code() *smsDeliver {
+	sd.typ = smsTypeCode
+
+	return sd
+}
+
+func (sd *smsDeliver) Notify() *smsDeliver {
+	sd.typ = smsTypeNotify
+
+	return sd
+}
+
+func (sd *smsDeliver) Advertising() *smsDeliver {
+	sd.typ = smsTypeAdvertising
+
+	return sd
+}
+
+func (sd *smsDeliver) Send(ctx context.Context) (string, Status, error) {
 	return sd.executor.send(ctx, sd)
 }

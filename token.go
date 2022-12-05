@@ -10,5 +10,5 @@ type token struct {
 }
 
 func (t *token) validate() bool {
-	return time.Now().After(t.expiresIn.Add(5 * time.Minute))
+	return time.Now().Before(t.expiresIn.Add(5 * time.Minute))
 }

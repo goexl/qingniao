@@ -3,6 +3,8 @@ package qingniao
 import (
 	"context"
 	"fmt"
+	"github.com/goexl/exc"
+	"github.com/goexl/gox"
 	"strings"
 	"time"
 
@@ -21,6 +23,7 @@ type chuangcache struct {
 	smsEndpoint string
 	token       *token
 
+	code   chuangcacheCode
 	http   *resty.Client
 	logger simaqian.Logger
 }
@@ -32,18 +35,19 @@ func newChuangcache(ak string, sk string, http *resty.Client, logger simaqian.Lo
 		apiEndpoint: "https://api.chuangcache.com",
 		smsEndpoint: "https://sms.chuangcache.com/api/sms",
 
+		code:   newChuangcacheCode(),
 		http:   http,
 		logger: logger,
 	}
 }
 
-func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string, err error) {
+func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string, status Status, err error) {
 	if err = xiren.Struct(deliver); nil != err {
 		return
 	}
 
 	baseReq := &baseChuangcacheSmsReq{
-		AppKey:  "",
+		AppKey:  deliver.template,
 		Mobile:  strings.Join(deliver.mobiles, ","),
 		Content: deliver.content,
 		Time:    fmt.Sprintf("%d", time.Now().UnixNano()/1e6),
@@ -59,12 +63,15 @@ func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string,
 
 	request := c.http.R()
 	switch deliver.typ {
-	case smsTypeCommon:
-		fallthrough
+	case smsTypeCode:
+		request.SetBody(chuangcacheOrdinaryReq{
+			baseChuangcacheSmsReq: baseReq,
+			Type:                  1,
+		})
 	case smsTypeNotify:
 		request.SetBody(chuangcacheOrdinaryReq{
 			baseChuangcacheSmsReq: baseReq,
-			Type:                  int(deliver.typ),
+			Type:                  2,
 		})
 	case smsTypeAdvertising:
 		request.SetBody(chuangcacheAdvertisingReq{
@@ -80,6 +87,38 @@ func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string,
 		c.logger.Warn("创世云返回错误", field.New("status.code", hr.StatusCode()))
 	} else {
 		id = rsp.Id
+	}
+
+	fields := gox.Fields[any]{
+		field.New("content", deliver.content),
+		field.New("mobiles", deliver.mobiles),
+		field.New("template", deliver.template),
+		field.New("id", rsp.Id),
+	}
+	// 设置状态
+	switch rsp.Code {
+	case c.code.success:
+		status = StatusAccepted
+		c.logger.Debug("短信已提交到创世云", fields...)
+	case c.code.badRequest:
+		err = exc.NewException(rsp.Code, "请求参数错误", fields...)
+	case c.code.unauthorized:
+		err = exc.NewException(rsp.Code, "请求鉴权错误", fields...)
+	case c.code.userNotfound:
+		err = exc.NewException(rsp.Code, "用户不存在", fields...)
+	case c.code.appNotfound:
+		err = exc.NewException(rsp.Code, "短信服务不存在", fields...)
+	case c.code.failed:
+		status = StatusReject
+		c.logger.Warn("短信提交到创世去出错", fields...)
+	case c.code.noBalance:
+		err = exc.NewException(rsp.Code, "余额不足", fields...)
+	case c.code.timestampError:
+		err = exc.NewException(rsp.Code, "时间戳错误", fields...)
+	case c.code.tokenError:
+		err = exc.NewException(rsp.Code, "授权码错误", fields...)
+	case c.code.mobileInvalid:
+		err = exc.NewException(rsp.Code, "存在不合法手机号", fields...)
 	}
 
 	return
@@ -99,7 +138,7 @@ func (c *chuangcache) getToken(ctx context.Context) (_token string, err error) {
 	}
 	rsp := new(chuangcacheTokenRsp)
 	url := fmt.Sprintf("%s/%s", c.apiEndpoint, "OAuth/authorize")
-	if hr, pe := c.http.R().SetContext(ctx).SetBody(req).SetResult(rsp).Post(url); nil == pe {
+	if hr, pe := c.http.R().SetContext(ctx).SetBody(req).SetResult(rsp).Post(url); nil != pe {
 		err = pe
 	} else if hr.IsError() {
 		c.logger.Warn("创世云返回错误", field.New("status.code", hr.StatusCode()))
