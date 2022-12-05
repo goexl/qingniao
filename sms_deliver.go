@@ -5,43 +5,43 @@ import (
 )
 
 type smsDeliver struct {
-	template string   `validate:"required"`
-	mobiles  []string `validate:"required,dive,mobile"`
-	content  string   `validate:"required,max=536"`
-	typ      smsType  `validate:"oneof=1 2"`
+	Template string   `validate:"required"`
+	Mobiles  []string `validate:"required,unique"`
+	Content  string   `validate:"required,max=536"`
+	Type     smsType  `validate:"oneof=1 2"`
 
 	executor smsExecutor
 }
 
 func newSmsDeliver(template string, mobiles []string, content string, executor smsExecutor) *smsDeliver {
 	return &smsDeliver{
-		template: template,
-		mobiles:  mobiles,
-		content:  content,
+		Template: template,
+		Mobiles:  mobiles,
+		Content:  content,
 		executor: executor,
 	}
 }
 
 func (sd *smsDeliver) To(mobiles ...string) *smsDeliver {
-	sd.mobiles = append(sd.mobiles, mobiles...)
+	sd.Mobiles = append(sd.Mobiles, mobiles...)
 
 	return sd
 }
 
 func (sd *smsDeliver) Code() *smsDeliver {
-	sd.typ = smsTypeCode
+	sd.Type = smsTypeCode
 
 	return sd
 }
 
 func (sd *smsDeliver) Notify() *smsDeliver {
-	sd.typ = smsTypeNotify
+	sd.Type = smsTypeNotify
 
 	return sd
 }
 
 func (sd *smsDeliver) Advertising() *smsDeliver {
-	sd.typ = smsTypeAdvertising
+	sd.Type = smsTypeAdvertising
 
 	return sd
 }

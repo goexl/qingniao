@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/go-resty/resty/v2 v2.7.0
+	github.com/goexl/exc v0.0.5
 	github.com/goexl/gox v0.1.6
 	github.com/goexl/simaqian v0.2.0
 	github.com/goexl/xiren v0.0.5
@@ -15,7 +16,6 @@ require (
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.1 // indirect
 	github.com/goexl/baozheng v0.0.1 // indirect
-	github.com/goexl/exc v0.0.5 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	go.uber.org/atomic v1.10.0 // indirect

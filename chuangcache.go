@@ -3,10 +3,11 @@ package qingniao
 import (
 	"context"
 	"fmt"
-	"github.com/goexl/exc"
-	"github.com/goexl/gox"
 	"strings"
 	"time"
+
+	"github.com/goexl/exc"
+	"github.com/goexl/gox"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/goexl/gox/field"
@@ -47,9 +48,9 @@ func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string,
 	}
 
 	baseReq := &baseChuangcacheSmsReq{
-		AppKey:  deliver.template,
-		Mobile:  strings.Join(deliver.mobiles, ","),
-		Content: deliver.content,
+		AppKey:  deliver.Template,
+		Mobile:  strings.Join(deliver.Mobiles, ","),
+		Content: deliver.Content,
 		Time:    fmt.Sprintf("%d", time.Now().UnixNano()/1e6),
 	}
 	if _token, te := c.getToken(ctx); nil != te {
@@ -62,7 +63,7 @@ func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string,
 	}
 
 	request := c.http.R()
-	switch deliver.typ {
+	switch deliver.Type {
 	case smsTypeCode:
 		request.SetBody(chuangcacheOrdinaryReq{
 			baseChuangcacheSmsReq: baseReq,
@@ -90,10 +91,10 @@ func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string,
 	}
 
 	fields := gox.Fields[any]{
-		field.New("content", deliver.content),
-		field.New("mobiles", deliver.mobiles),
-		field.New("template", deliver.template),
-		field.New("id", rsp.Id),
+		field.New("content", deliver.Content),
+		field.New("mobiles", deliver.Mobiles),
+		field.New("template", deliver.Template),
+		field.New("id", id),
 	}
 	// 设置状态
 	switch rsp.Code {

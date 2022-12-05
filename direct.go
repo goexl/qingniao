@@ -57,21 +57,21 @@ func (d *direct) send(_ context.Context, deliver *emailDeliver) (id string, err 
 	}
 
 	em := email.NewEmail()
-	em.From = deliver.from
+	em.From = deliver.FromField
 	if "" != em.From {
 		em.From = fmt.Sprintf("%s@%s", d.username, d.host)
 	}
-	em.To = deliver.to
-	em.Bcc = deliver.bcc
-	em.Cc = deliver.cc
-	em.Subject = deliver.subject
-	switch deliver.typ {
+	em.To = deliver.ToField
+	em.Bcc = deliver.BccField
+	em.Cc = deliver.CcField
+	em.Subject = deliver.SubjectField
+	switch deliver.Type {
 	case emailTypeHtml:
-		em.HTML = []byte(deliver.content)
+		em.HTML = []byte(deliver.Content)
 	case emailTypePlain:
-		em.Text = []byte(deliver.content)
+		em.Text = []byte(deliver.Content)
 	default:
-		em.HTML = []byte(deliver.content)
+		em.HTML = []byte(deliver.Content)
 	}
 	err = d.pool.Send(em, deliver.timeout)
 

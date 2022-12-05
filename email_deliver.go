@@ -6,25 +6,25 @@ import (
 )
 
 type emailDeliver struct {
-	typ     emailType `validate:"required,oneof=html plain"`
-	subject string    `validate:"required"`
-	content string    `validate:"required"`
-	from    string    `validate:"required"`
-	to      []string  `validate:"required,dive,email"`
-	cc      []string  `validate:"omitempty,dive,email"`
-	bcc     []string  `validate:"omitempty,dive,email"`
-	timeout time.Duration
+	Type         emailType `validate:"required,oneof=html plain"`
+	SubjectField string    `validate:"required"`
+	Content      string    `validate:"required"`
+	FromField    string    `validate:"required"`
+	ToField      []string  `validate:"required,dive,email"`
+	CcField      []string  `validate:"omitempty,dive,email"`
+	BccField     []string  `validate:"omitempty,dive,email"`
+	timeout      time.Duration
 
 	executor emailExecutor
 }
 
 func newEmailDeliver(addresses []string, subject string, content string, executor emailExecutor) *emailDeliver {
 	return &emailDeliver{
-		subject:  subject,
-		content:  content,
-		to:       addresses,
-		executor: executor,
-		timeout:  10 * time.Second,
+		SubjectField: subject,
+		Content:      content,
+		ToField:      addresses,
+		executor:     executor,
+		timeout:      10 * time.Second,
 	}
 }
 
@@ -33,43 +33,43 @@ func (ed *emailDeliver) Send(ctx context.Context) (string, error) {
 }
 
 func (ed *emailDeliver) From(from string) *emailDeliver {
-	ed.from = from
+	ed.FromField = from
 
 	return ed
 }
 
 func (ed *emailDeliver) To(to ...string) *emailDeliver {
-	ed.to = append(ed.to, to...)
+	ed.ToField = append(ed.ToField, to...)
 
 	return ed
 }
 
 func (ed *emailDeliver) Cc(cc ...string) *emailDeliver {
-	ed.cc = append(ed.cc, cc...)
+	ed.CcField = append(ed.CcField, cc...)
 
 	return ed
 }
 
 func (ed *emailDeliver) Bcc(bcc ...string) *emailDeliver {
-	ed.bcc = append(ed.bcc, bcc...)
+	ed.BccField = append(ed.BccField, bcc...)
 
 	return ed
 }
 
 func (ed *emailDeliver) Subject(subject string) *emailDeliver {
-	ed.subject = subject
+	ed.SubjectField = subject
 
 	return ed
 }
 
 func (ed *emailDeliver) Html() *emailDeliver {
-	ed.typ = emailTypeHtml
+	ed.Type = emailTypeHtml
 
 	return ed
 }
 
 func (ed *emailDeliver) Plain() *emailDeliver {
-	ed.typ = emailTypePlain
+	ed.Type = emailTypePlain
 
 	return ed
 }
