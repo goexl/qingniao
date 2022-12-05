@@ -18,11 +18,11 @@ type emailDeliver struct {
 	executor emailExecutor
 }
 
-func newEmailDeliver(addr string, subject string, content string, executor emailExecutor) *emailDeliver {
+func newEmailDeliver(addresses []string, subject string, content string, executor emailExecutor) *emailDeliver {
 	return &emailDeliver{
 		subject:  subject,
 		content:  content,
-		to:       []string{addr},
+		to:       addresses,
 		executor: executor,
 		timeout:  10 * time.Second,
 	}

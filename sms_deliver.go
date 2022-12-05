@@ -13,10 +13,10 @@ type smsDeliver struct {
 	executor smsExecutor
 }
 
-func newSmsDeliver(template string, mobile string, content string, executor smsExecutor) *smsDeliver {
+func newSmsDeliver(template string, mobiles []string, content string, executor smsExecutor) *smsDeliver {
 	return &smsDeliver{
 		template: template,
-		mobiles:  []string{mobile},
+		mobiles:  mobiles,
 		content:  content,
 		executor: executor,
 	}

@@ -11,6 +11,6 @@ func newEmail(executor emailExecutor) *Email {
 	}
 }
 
-func (e *Email) To(addr string, subject string, content string) *emailDeliver {
-	return newEmailDeliver(addr, subject, content, e.executor)
+func (e *Email) Deliver(subject string, content string, addresses ...string) *emailDeliver {
+	return newEmailDeliver(addresses, subject, content, e.executor)
 }
