@@ -5,5 +5,5 @@ import (
 )
 
 type wechatExecutor interface {
-	send(ctx context.Context, deliver *smsDeliver) (id string, status Status, err error)
+	send(ctx context.Context, deliver *wechatDeliver) (id string, status Status, err error)
 }

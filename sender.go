@@ -39,3 +39,7 @@ func (s *Sender) Email() *emailBuilder {
 func (s *Sender) Sms() *smsBuilder {
 	return newSmsBuilder(s.http, s.logger)
 }
+
+func (s *Sender) Wechat() *wechatBuilder {
+	return newWechatBuilder(s.http, s.logger)
+}
