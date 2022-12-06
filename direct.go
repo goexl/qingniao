@@ -57,14 +57,14 @@ func (d *direct) send(_ context.Context, deliver *emailDeliver) (id string, err 
 	}
 
 	em := email.NewEmail()
-	em.From = deliver.FromField
+	em.From = deliver.FromAddress
 	if "" != em.From {
 		em.From = fmt.Sprintf("%s@%s", d.username, d.host)
 	}
-	em.To = deliver.ToField
-	em.Bcc = deliver.BccField
-	em.Cc = deliver.CcField
-	em.Subject = deliver.SubjectField
+	em.To = deliver.ToSlice
+	em.Bcc = deliver.BccSlice
+	em.Cc = deliver.CcSlice
+	em.Subject = deliver.SubjectString
 	switch deliver.Type {
 	case emailTypeHtml:
 		em.HTML = []byte(deliver.Content)

@@ -6,13 +6,18 @@ import (
 )
 
 type emailDeliver struct {
-	Type         emailType `validate:"required,oneof=html plain"`
-	SubjectField string    `validate:"required"`
-	Content      string    `validate:"required"`
-	FromField    string    `validate:"required"`
-	ToField      []string  `validate:"required,dive,email"`
-	CcField      []string  `validate:"omitempty,dive,email"`
-	BccField     []string  `validate:"omitempty,dive,email"`
+	Type          emailType `validate:"required,oneof=html plain"`
+	// 避免和方法冲突不得已命名
+	SubjectString string    `validate:"required"`
+	Content       string    `validate:"required"`
+	// 避免和方法冲突不得已命名
+	FromAddress  string    `validate:"required"`
+	// 避免和方法冲突不得已命名
+	ToSlice      []string  `validate:"required,dive,email"`
+	// 避免和方法冲突不得已命名
+	CcSlice      []string  `validate:"omitempty,dive,email"`
+	// 避免和方法冲突不得已命名
+	BccSlice     []string  `validate:"omitempty,dive,email"`
 	timeout      time.Duration
 
 	executor emailExecutor
@@ -20,11 +25,11 @@ type emailDeliver struct {
 
 func newEmailDeliver(addresses []string, subject string, content string, executor emailExecutor) *emailDeliver {
 	return &emailDeliver{
-		SubjectField: subject,
-		Content:      content,
-		ToField:      addresses,
-		executor:     executor,
-		timeout:      10 * time.Second,
+		SubjectString: subject,
+		Content:       content,
+		ToSlice:       addresses,
+		executor:      executor,
+		timeout:       10 * time.Second,
 	}
 }
 
@@ -33,31 +38,31 @@ func (ed *emailDeliver) Send(ctx context.Context) (string, error) {
 }
 
 func (ed *emailDeliver) From(from string) *emailDeliver {
-	ed.FromField = from
+	ed.FromAddress = from
 
 	return ed
 }
 
 func (ed *emailDeliver) To(to ...string) *emailDeliver {
-	ed.ToField = append(ed.ToField, to...)
+	ed.ToSlice = append(ed.ToSlice, to...)
 
 	return ed
 }
 
 func (ed *emailDeliver) Cc(cc ...string) *emailDeliver {
-	ed.CcField = append(ed.CcField, cc...)
+	ed.CcSlice = append(ed.CcSlice, cc...)
 
 	return ed
 }
 
 func (ed *emailDeliver) Bcc(bcc ...string) *emailDeliver {
-	ed.BccField = append(ed.BccField, bcc...)
+	ed.BccSlice = append(ed.BccSlice, bcc...)
 
 	return ed
 }
 
 func (ed *emailDeliver) Subject(subject string) *emailDeliver {
-	ed.SubjectField = subject
+	ed.SubjectString = subject
 
 	return ed
 }
