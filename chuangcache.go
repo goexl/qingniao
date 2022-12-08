@@ -48,7 +48,7 @@ func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string,
 	}
 
 	baseReq := &baseChuangcacheSmsReq{
-		AppKey:  deliver.Template,
+		AppKey:  deliver.AppKey,
 		Mobile:  strings.Join(deliver.Mobiles, ","),
 		Content: deliver.Content,
 		Time:    fmt.Sprintf("%d", time.Now().UnixNano()/1e6),
@@ -93,7 +93,7 @@ func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string,
 	fields := gox.Fields[any]{
 		field.New("content", deliver.Content),
 		field.New("mobiles", deliver.Mobiles),
-		field.New("template", deliver.Template),
+		field.New("template", deliver.AppKey),
 		field.New("id", id),
 	}
 	// 设置状态

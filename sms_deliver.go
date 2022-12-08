@@ -5,17 +5,17 @@ import (
 )
 
 type smsDeliver struct {
-	Template string   `validate:"required"`
-	Mobiles  []string `validate:"required,unique"`
-	Content  string   `validate:"required,max=536"`
-	Type     smsType  `validate:"oneof=1 2"`
+	AppKey  string   `validate:"required"`
+	Mobiles []string `validate:"required,unique"`
+	Content string   `validate:"required,max=536"`
+	Type    smsType  `validate:"oneof=1 2"`
 
 	executor smsExecutor
 }
 
-func newSmsDeliver(template string, mobiles []string, content string, executor smsExecutor) *smsDeliver {
+func newSmsDeliver(appKey string, mobiles []string, content string, executor smsExecutor) *smsDeliver {
 	return &smsDeliver{
-		Template: template,
+		AppKey:   appKey,
 		Mobiles:  mobiles,
 		Content:  content,
 		executor: executor,
