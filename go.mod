@@ -6,7 +6,7 @@ require (
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/goexl/exc v0.0.5
 	github.com/goexl/gox v0.1.6
-	github.com/goexl/simaqian v0.2.4
+	github.com/goexl/simaqian v0.2.5
 	github.com/goexl/xiren v0.0.5
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 )
