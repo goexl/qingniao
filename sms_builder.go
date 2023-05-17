@@ -6,8 +6,6 @@ import (
 )
 
 type smsBuilder struct {
-	executor smsExecutor
-
 	http   *resty.Client
 	logger simaqian.Logger
 }

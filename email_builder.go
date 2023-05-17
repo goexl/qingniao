@@ -6,8 +6,6 @@ import (
 )
 
 type emailBuilder struct {
-	executor emailExecutor
-
 	http   *resty.Client
 	logger simaqian.Logger
 }
