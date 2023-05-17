@@ -11,6 +11,6 @@ func newSms(executor smsExecutor) *Sms {
 	}
 }
 
-func (s *Sms) Deliver(template string, content string, mobiles ...string) *smsDeliver {
-	return newSmsDeliver(template, mobiles, content, s.executor)
+func (s *Sms) Deliver(content string, mobiles ...string) *smsDeliver {
+	return newSmsDeliver(mobiles, content, s.executor)
 }

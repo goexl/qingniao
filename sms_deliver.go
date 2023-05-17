@@ -4,48 +4,69 @@ import (
 	"context"
 )
 
-type smsDeliver struct {
-	AppKey  string   `validate:"required"`
-	Mobiles []string `validate:"required,unique"`
-	Content string   `validate:"required,max=536"`
-	Type    smsType  `validate:"oneof=1 2"`
+type (
+	smsDeliver struct {
+		key     any
+		mobile  []string
+		content string
+		typ     smsType
+		executor smsExecutor
+	}
 
-	executor smsExecutor
-}
+	smsDeliverInternal struct {
+		Key     any      `validate:"required"`
+		Mobiles []string `validate:"required,unique"`
+		Content string   `validate:"required,max=536"`
+		Type    smsType  `validate:"oneof=1 2 3"`
 
-func newSmsDeliver(appKey string, mobiles []string, content string, executor smsExecutor) *smsDeliver {
+		executor smsExecutor
+	}
+)
+
+func newSmsDeliver(mobiles []string, content string, executor smsExecutor) *smsDeliver {
 	return &smsDeliver{
-		AppKey:   appKey,
-		Mobiles:  mobiles,
-		Content:  content,
+		mobile:   mobiles,
+		content:  content,
 		executor: executor,
 	}
 }
 
+func (sd *smsDeliver) AppKey(key string) *smsDeliver {
+	sd.key = key
+
+	return sd
+}
+
 func (sd *smsDeliver) To(mobiles ...string) *smsDeliver {
-	sd.Mobiles = append(sd.Mobiles, mobiles...)
+	sd.mobile = append(sd.mobile, mobiles...)
 
 	return sd
 }
 
 func (sd *smsDeliver) Code() *smsDeliver {
-	sd.Type = smsTypeCode
+	sd.typ = smsTypeCode
 
 	return sd
 }
 
 func (sd *smsDeliver) Notify() *smsDeliver {
-	sd.Type = smsTypeNotify
+	sd.typ = smsTypeNotify
 
 	return sd
 }
 
 func (sd *smsDeliver) Advertising() *smsDeliver {
-	sd.Type = smsTypeAdvertising
+	sd.typ = smsTypeAdvertising
 
 	return sd
 }
 
 func (sd *smsDeliver) Send(ctx context.Context) (string, Status, error) {
-	return sd.executor.send(ctx, sd)
+	return sd.executor.send(ctx, &smsDeliverInternal{
+		Key:      sd.key,
+		Mobiles:  sd.mobile,
+		Content:  sd.content,
+		Type:     sd.typ,
+		executor: sd.executor,
+	})
 }

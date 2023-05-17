@@ -42,13 +42,13 @@ func newChuangcache(ak string, sk string, http *resty.Client, logger simaqian.Lo
 	}
 }
 
-func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string, status Status, err error) {
+func (c *chuangcache) send(ctx context.Context, deliver *smsDeliverInternal) (id string, status Status, err error) {
 	if err = xiren.Struct(deliver); nil != err {
 		return
 	}
 
 	baseReq := &baseChuangcacheSmsReq{
-		AppKey:  deliver.AppKey,
+		AppKey:  deliver.Key.(string),
 		Mobile:  strings.Join(deliver.Mobiles, ","),
 		Content: deliver.Content,
 		Time:    fmt.Sprintf("%d", time.Now().UnixNano()/1e6),
@@ -93,7 +93,7 @@ func (c *chuangcache) send(ctx context.Context, deliver *smsDeliver) (id string,
 	fields := gox.Fields[any]{
 		field.New("content", deliver.Content),
 		field.New("mobiles", deliver.Mobiles),
-		field.New("template", deliver.AppKey),
+		field.New("app.key", deliver.Key),
 		field.New("id", id),
 	}
 	// 设置状态

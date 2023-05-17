@@ -5,5 +5,5 @@ import (
 )
 
 type smsExecutor interface {
-	send(ctx context.Context, deliver *smsDeliver) (id string, status Status, err error)
+	send(ctx context.Context, deliver *smsDeliverInternal) (id string, status Status, err error)
 }
