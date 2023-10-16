@@ -3,7 +3,7 @@ module github.com/goexl/qingniao
 go 1.19
 
 require (
-	github.com/go-resty/resty/v2 v2.9.1
+	github.com/go-resty/resty/v2 v2.10.0
 	github.com/goexl/exc v0.0.5
 	github.com/goexl/gox v0.1.6
 	github.com/goexl/simaqian v0.2.5
