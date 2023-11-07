@@ -1,16 +1,16 @@
 package qingniao
 
 import (
-	"github.com/go-resty/resty/v2"
-	"github.com/goexl/simaqian"
+	"github.com/goexl/http"
+	"github.com/goexl/log"
 )
 
 type emailBuilder struct {
-	http   *resty.Client
-	logger simaqian.Logger
+	http   *http.Client
+	logger log.Logger
 }
 
-func newEmailBuilder(http *resty.Client, logger simaqian.Logger) *emailBuilder {
+func newEmailBuilder(http *http.Client, logger log.Logger) *emailBuilder {
 	return &emailBuilder{
 		http:   http,
 		logger: logger,

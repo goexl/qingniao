@@ -1,16 +1,16 @@
 package qingniao
 
 import (
-	"github.com/go-resty/resty/v2"
-	"github.com/goexl/simaqian"
+	"github.com/goexl/http"
+	"github.com/goexl/log"
 )
 
 type wechatBuilder struct {
-	http   *resty.Client
-	logger simaqian.Logger
+	http   *http.Client
+	logger log.Logger
 }
 
-func newWechatBuilder(http *resty.Client, logger simaqian.Logger) *wechatBuilder {
+func newWechatBuilder(http *http.Client, logger log.Logger) *wechatBuilder {
 	return &wechatBuilder{
 		http:   http,
 		logger: logger,

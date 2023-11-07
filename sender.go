@@ -1,16 +1,16 @@
 package qingniao
 
 import (
-	"github.com/go-resty/resty/v2"
-	"github.com/goexl/simaqian"
+	"github.com/goexl/http"
+	"github.com/goexl/log"
 )
 
 var _ = New
 
 // Sender 发送者
 type Sender struct {
-	http   *resty.Client
-	logger simaqian.Logger
+	http   *http.Client
+	logger log.Logger
 }
 
 // New 创建发送者
@@ -20,10 +20,10 @@ func New(opts ...option) *Sender {
 		opt.apply(_options)
 	}
 	if nil == _options.http {
-		_options.http = resty.New()
+		_options.http = http.New().Build()
 	}
 	if nil == _options.logger {
-		_options.logger = simaqian.Must()
+		_options.logger = log.New().Apply()
 	}
 
 	return &Sender{
