@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/goexl/exc v0.0.5
 	github.com/goexl/gox v0.3.8
-	github.com/goexl/http v0.0.6
+	github.com/goexl/http v0.0.7
 	github.com/goexl/log v0.0.5
 	github.com/goexl/xiren v0.0.5
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
