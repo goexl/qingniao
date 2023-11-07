@@ -3,9 +3,10 @@ package qingniao
 import (
 	"context"
 	"fmt"
-	"github.com/go-resty/resty/v2"
+
 	"github.com/goexl/gox/field"
-	"github.com/goexl/simaqian"
+	"github.com/goexl/http"
+	"github.com/goexl/log"
 )
 
 var _ wechatExecutor = (*serverChan)(nil)
@@ -13,11 +14,11 @@ var _ wechatExecutor = (*serverChan)(nil)
 type serverChan struct {
 	key string
 
-	http   *resty.Client
-	logger simaqian.Logger
+	http   *http.Client
+	logger log.Logger
 }
 
-func newServerChan(key string, http *resty.Client, logger simaqian.Logger) *serverChan {
+func newServerChan(key string, http *http.Client, logger log.Logger) *serverChan {
 	return &serverChan{
 		key: key,
 

@@ -1,16 +1,16 @@
 package qingniao
 
 import (
-	"github.com/go-resty/resty/v2"
-	"github.com/goexl/simaqian"
+	"github.com/goexl/http"
+	"github.com/goexl/log"
 )
 
 type smsBuilder struct {
-	http   *resty.Client
-	logger simaqian.Logger
+	http   *http.Client
+	logger log.Logger
 }
 
-func newSmsBuilder(http *resty.Client, logger simaqian.Logger) *smsBuilder {
+func newSmsBuilder(http *http.Client, logger log.Logger) *smsBuilder {
 	return &smsBuilder{
 		http:   http,
 		logger: logger,

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/smtp"
 
-	"github.com/goexl/simaqian"
+	"github.com/goexl/log"
 	"github.com/goexl/xiren"
 	"github.com/jordan-wright/email"
 )
@@ -21,14 +21,14 @@ type direct struct {
 	poolSize int
 
 	pool   *email.Pool
-	logger simaqian.Logger
+	logger log.Logger
 }
 
 func newDirect(
 	host string, port int,
 	username string, password string, identity string,
 	poolSize int,
-	logger simaqian.Logger,
+	logger log.Logger,
 ) *direct {
 	return &direct{
 		host:     host,

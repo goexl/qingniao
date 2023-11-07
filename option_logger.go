@@ -1,7 +1,7 @@
 package qingniao
 
 import (
-	"github.com/goexl/simaqian"
+	"github.com/goexl/log"
 )
 
 var (
@@ -10,11 +10,11 @@ var (
 )
 
 type optionLogger struct {
-	logger simaqian.Logger
+	logger log.Logger
 }
 
 // Logger 配置日志
-func Logger(logger simaqian.Logger) *optionLogger {
+func Logger(logger log.Logger) *optionLogger {
 	return &optionLogger{
 		logger: logger,
 	}

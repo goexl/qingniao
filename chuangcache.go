@@ -8,10 +8,10 @@ import (
 
 	"github.com/goexl/exc"
 	"github.com/goexl/gox"
+	"github.com/goexl/http"
+	"github.com/goexl/log"
 
-	"github.com/go-resty/resty/v2"
 	"github.com/goexl/gox/field"
-	"github.com/goexl/simaqian"
 	"github.com/goexl/xiren"
 )
 
@@ -25,11 +25,11 @@ type chuangcache struct {
 	token       *token
 
 	code   chuangcacheCode
-	http   *resty.Client
-	logger simaqian.Logger
+	http   *http.Client
+	logger log.Logger
 }
 
-func newChuangcache(ak string, sk string, http *resty.Client, logger simaqian.Logger) *chuangcache {
+func newChuangcache(ak string, sk string, http *http.Client, logger log.Logger) *chuangcache {
 	return &chuangcache{
 		ak:          ak,
 		sk:          sk,

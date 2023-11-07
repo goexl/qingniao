@@ -3,7 +3,7 @@ package qingniao
 import (
 	"runtime"
 
-	"github.com/goexl/simaqian"
+	"github.com/goexl/log"
 )
 
 type directBuilder struct {
@@ -14,10 +14,10 @@ type directBuilder struct {
 	poolSize int
 	identity string
 
-	logger simaqian.Logger
+	logger log.Logger
 }
 
-func newDirectBuilder(host string, port int, logger simaqian.Logger) *directBuilder {
+func newDirectBuilder(host string, port int, logger log.Logger) *directBuilder {
 	return &directBuilder{
 		host:     host,
 		port:     port,

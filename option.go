@@ -1,8 +1,8 @@
 package qingniao
 
 import (
-	"github.com/go-resty/resty/v2"
-	"github.com/goexl/simaqian"
+	"github.com/goexl/http"
+	"github.com/goexl/log"
 )
 
 var _ = NewOptions
@@ -13,8 +13,8 @@ type (
 	}
 
 	options struct {
-		http   *resty.Client
-		logger simaqian.Logger
+		http   *http.Client
+		logger log.Logger
 	}
 )
 

@@ -1,7 +1,7 @@
 package qingniao
 
 import (
-	"github.com/go-resty/resty/v2"
+	"github.com/goexl/http"
 )
 
 var (
@@ -10,11 +10,11 @@ var (
 )
 
 type optionHttp struct {
-	client *resty.Client
+	client *http.Client
 }
 
 // HttpClient 配置客户端
-func HttpClient(client *resty.Client) *optionHttp {
+func HttpClient(client *http.Client) *optionHttp {
 	return &optionHttp{
 		client: client,
 	}
