@@ -16,7 +16,7 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.16.0 // indirect
-	github.com/go-resty/resty/v2 v2.10.0 // indirect
+	github.com/go-resty/resty/v2 v2.11.0 // indirect
 	github.com/goexl/baozheng v0.0.1 // indirect
 	github.com/goexl/exception v0.0.1 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
