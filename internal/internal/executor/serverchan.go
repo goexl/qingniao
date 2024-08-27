@@ -12,17 +12,17 @@ import (
 	internal2 "github.com/goexl/qingniao/internal/kernel"
 )
 
-var _ internal.Wechat = (*ServerChan)(nil)
+var _ internal.Wechat = (*Serverchan)(nil)
 
-type ServerChan struct {
+type Serverchan struct {
 	key string
 
 	http   *http.Client
 	logger log.Logger
 }
 
-func NewServerChan(key string, http *http.Client, logger log.Logger) *ServerChan {
-	return &ServerChan{
+func NewServerchan(key string, http *http.Client, logger log.Logger) *Serverchan {
+	return &Serverchan{
 		key: key,
 
 		http:   http,
@@ -30,16 +30,16 @@ func NewServerChan(key string, http *http.Client, logger log.Logger) *ServerChan
 	}
 }
 
-func (sc *ServerChan) Send(ctx context.Context, deliver *deliver.Wechat) (id string, status internal2.Status, err error) {
+func (s *Serverchan) Send(ctx context.Context, deliver *deliver.Wechat) (id string, status internal2.Status, err error) {
 	form := map[string]string{
 		"title": deliver.Title,
 		"desp":  deliver.Content,
 	}
-	url := fmt.Sprintf("https://sctapi.ftqq.com/%s.send", sc.key)
-	if hr, pe := sc.http.R().SetContext(ctx).SetFormData(form).Post(url); nil != pe {
+	url := fmt.Sprintf("https://sctapi.ftqq.com/%s.send", s.key)
+	if hr, pe := s.http.R().SetContext(ctx).SetFormData(form).Post(url); nil != pe {
 		err = pe
 	} else if hr.IsError() {
-		sc.logger.Warn("ServerChan返回错误", field.New("status.code", hr.StatusCode()))
+		s.logger.Warn("Serverchan返回错误", field.New("status.code", hr.StatusCode()))
 	} else {
 		status = internal2.StatusDelivered
 	}

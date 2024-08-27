@@ -19,8 +19,8 @@ func NewEmail(params *param.Sender, sender *Sender) *Email {
 	}
 }
 
-func (e *Email) Direct(host string, port int) *Direct {
-	return NewDirect(host, port, e.params.Logger, e)
+func (e *Email) Smtp(host string, port int) *Smtp {
+	return NewSmtp(host, port, e.params.Logger, e)
 }
 
 func (e *Email) Build() (sender *Sender) {

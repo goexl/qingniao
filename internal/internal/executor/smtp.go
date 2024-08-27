@@ -13,9 +13,9 @@ import (
 	"github.com/jordan-wright/email"
 )
 
-var _ internal.Email = (*Direct)(nil)
+var _ internal.Email = (*Smtp)(nil)
 
-type Direct struct {
+type Smtp struct {
 	host     string
 	port     int
 	username string
@@ -27,13 +27,13 @@ type Direct struct {
 	logger log.Logger
 }
 
-func NewDirect(
+func NewSmtp(
 	host string, port int,
 	username string, password string, identity string,
 	poolSize int,
 	logger log.Logger,
-) *Direct {
-	return &Direct{
+) *Smtp {
+	return &Smtp{
 		host:     host,
 		port:     port,
 		username: username,
@@ -45,15 +45,15 @@ func NewDirect(
 	}
 }
 
-func (d *Direct) Send(_ context.Context, deliver *deliver.Email) (id string, err error) {
+func (s *Smtp) Send(_ context.Context, deliver *deliver.Email) (id string, err error) {
 	if err = xiren.Struct(deliver); nil != err {
 		return
 	}
 
-	if nil == d.pool {
-		addr := fmt.Sprintf("%s:%d", d.host, d.port)
-		auth := smtp.PlainAuth(d.identity, d.username, d.password, d.host)
-		d.pool, err = email.NewPool(addr, d.poolSize, auth)
+	if nil == s.pool {
+		addr := fmt.Sprintf("%s:%s", s.host, s.port)
+		auth := smtp.PlainAuth(s.identity, s.username, s.password, s.host)
+		s.pool, err = email.NewPool(addr, s.poolSize, auth)
 	}
 	if nil != err {
 		return
@@ -62,7 +62,7 @@ func (d *Direct) Send(_ context.Context, deliver *deliver.Email) (id string, err
 	em := email.NewEmail()
 	em.From = deliver.From
 	if "" != em.From {
-		em.From = fmt.Sprintf("%s@%s", d.username, d.host)
+		em.From = fmt.Sprintf("%s@%s", s.username, s.host)
 	}
 	em.To = deliver.To
 	em.Bcc = deliver.Bcc
@@ -76,7 +76,7 @@ func (d *Direct) Send(_ context.Context, deliver *deliver.Email) (id string, err
 	default:
 		em.HTML = []byte(deliver.Content)
 	}
-	err = d.pool.Send(em, deliver.Timeout)
+	err = s.pool.Send(em, deliver.Timeout)
 
 	return
 }

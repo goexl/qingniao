@@ -20,8 +20,8 @@ func NewWechat(params *param.Sender, sender *Sender) *Wechat {
 	}
 }
 
-func (w *Wechat) ServerChan(key string) (wechat *Wechat) {
-	w.chain = executor.NewServerChan(key, w.params.Http, w.params.Logger)
+func (w *Wechat) Serverchan(key string) (wechat *Wechat) {
+	w.chain = executor.NewServerchan(key, w.params.Http, w.params.Logger)
 	wechat = w
 
 	return
