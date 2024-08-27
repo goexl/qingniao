@@ -9,3 +9,5 @@
   - 创世云
   - 腾讯云
   - 阿里云
+- 微信
+  - Server酱（`ServerChan`）
