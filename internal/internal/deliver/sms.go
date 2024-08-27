@@ -3,6 +3,8 @@ package deliver
 import (
 	"context"
 
+	"github.com/goexl/exception"
+	"github.com/goexl/gox/field"
 	"github.com/goexl/qingniao/internal/internal"
 	"github.com/goexl/qingniao/internal/internal/constant"
 	"github.com/goexl/qingniao/internal/internal/executor/deliver"
@@ -11,21 +13,24 @@ import (
 )
 
 type Sms struct {
+	base
+
 	key     string
 	mobiles []string
 	content string
 	typ     constant.SmsType
 
-	picker  *picker[internal.Sms]
-	current constant.Executor
+	executors map[string]internal.Sms
 }
 
-func NewSms(mobile string, content string, executors map[constant.Executor]internal.Sms) (sms *Sms) {
+func NewSms(mobile string, content string, executors map[string]internal.Sms) (sms *Sms) {
 	return &Sms{
+		base: newBase(),
+
 		mobiles: []string{mobile},
 		content: content,
 
-		picker: newPicker(executors),
+		executors: executors,
 	}
 }
 
@@ -71,20 +76,17 @@ func (s *Sms) Send(ctx context.Context) (id string, status kernel.Status, err er
 	message.Mobiles = s.mobiles
 	message.Content = s.content
 	message.Type = s.typ
+
+	label := s.base.params.Label
 	if se := xiren.Struct(message); nil != se {
 		err = se
-	} else if executor, pe := s.picker.pick(s.current, "短信"); nil != pe {
-		err = pe
+	} else if executor, ok := s.executors[label]; !ok {
+		err = exception.New().Message("没有找到短信执行器").
+			Field(field.New("executors", s.executors)).Field(field.New("label", label)).
+			Build()
 	} else {
 		id, status, err = executor.Send(ctx, message)
 	}
-
-	return
-}
-
-func (s *Sms) Chuangcache() (sms *Sms) {
-	s.current = constant.ExecutorChuangcache
-	sms = s
 
 	return
 }

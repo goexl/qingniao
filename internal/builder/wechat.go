@@ -2,12 +2,13 @@ package builder
 
 import (
 	"github.com/goexl/qingniao/internal/internal"
-	"github.com/goexl/qingniao/internal/internal/constant"
 	"github.com/goexl/qingniao/internal/internal/executor"
 	"github.com/goexl/qingniao/internal/param"
 )
 
 type Wechat struct {
+	base
+
 	params *param.Sender
 	sender *Sender
 	chain  internal.Wechat
@@ -15,6 +16,8 @@ type Wechat struct {
 
 func NewWechat(params *param.Sender, sender *Sender) *Wechat {
 	return &Wechat{
+		base: newBase(),
+
 		params: params,
 		sender: sender,
 	}
@@ -28,7 +31,7 @@ func (w *Wechat) Serverchan(key string) (wechat *Wechat) {
 }
 
 func (w *Wechat) Build() (sender *Sender) {
-	w.sender.wechat[constant.ExecutorServerChain] = w.chain
+	w.sender.wechat[w.base.params.Label] = w.chain
 	sender = w.sender
 
 	return

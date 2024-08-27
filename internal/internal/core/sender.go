@@ -3,22 +3,21 @@ package core
 import (
 	"github.com/goexl/qingniao/internal/core"
 	"github.com/goexl/qingniao/internal/internal"
-	"github.com/goexl/qingniao/internal/internal/constant"
 	"github.com/goexl/qingniao/internal/internal/deliver"
 )
 
 var _ core.Sender = (*Sender)(nil)
 
 type Sender struct {
-	email  map[constant.Executor]internal.Email
-	sms    map[constant.Executor]internal.Sms
-	wechat map[constant.Executor]internal.Wechat
+	email  map[string]internal.Email
+	sms    map[string]internal.Sms
+	wechat map[string]internal.Wechat
 }
 
 func NewSender(
-	email map[constant.Executor]internal.Email,
-	sms map[constant.Executor]internal.Sms,
-	wechat map[constant.Executor]internal.Wechat,
+	email map[string]internal.Email,
+	sms map[string]internal.Sms,
+	wechat map[string]internal.Wechat,
 ) *Sender {
 	return &Sender{
 		email:  email,

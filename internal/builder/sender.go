@@ -4,16 +4,15 @@ import (
 	"github.com/goexl/http"
 	"github.com/goexl/log"
 	"github.com/goexl/qingniao/internal/internal"
-	"github.com/goexl/qingniao/internal/internal/constant"
 	"github.com/goexl/qingniao/internal/internal/core"
 	"github.com/goexl/qingniao/internal/param"
 )
 
 type Sender struct {
 	params *param.Sender
-	email  map[constant.Executor]internal.Email
-	sms    map[constant.Executor]internal.Sms
-	wechat map[constant.Executor]internal.Wechat
+	email  map[string]internal.Email
+	sms    map[string]internal.Sms
+	wechat map[string]internal.Wechat
 }
 
 func NewSender() *Sender {

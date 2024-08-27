@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/goexl/exception"
+	"github.com/goexl/gox/field"
 	"github.com/goexl/qingniao/internal/internal"
 	"github.com/goexl/qingniao/internal/internal/constant"
 	"github.com/goexl/qingniao/internal/internal/executor/deliver"
@@ -11,6 +13,8 @@ import (
 )
 
 type Email struct {
+	base
+
 	et      constant.EmailType
 	subject string
 	content string
@@ -20,18 +24,19 @@ type Email struct {
 	bcc     []string
 	timeout time.Duration
 
-	picker  *picker[internal.Email]
-	current constant.Executor
+	executors map[string]internal.Email
 }
 
-func NewEmail(address string, subject string, content string, executors map[constant.Executor]internal.Email) (email *Email) {
+func NewEmail(address string, subject string, content string, executors map[string]internal.Email) (email *Email) {
 	return &Email{
+		base: newBase(),
+
 		subject: subject,
 		content: content,
 		to:      []string{address},
 		timeout: 10 * time.Second,
 
-		picker: newPicker(executors),
+		executors: executors,
 	}
 }
 
@@ -45,10 +50,14 @@ func (e *Email) Send(ctx context.Context) (id string, err error) {
 	message.Cc = e.cc
 	message.Bcc = e.bcc
 	message.Timeout = e.timeout
+
+	label := e.base.params.Label
 	if se := xiren.Struct(message); nil != se {
 		err = se
-	} else if executor, pe := e.picker.pick(e.current, "邮件"); nil != pe {
-		err = pe
+	} else if executor, ok := e.executors[label]; !ok {
+		err = exception.New().Message("没有找到邮件执行器").
+			Field(field.New("executors", e.executors)).Field(field.New("label", label)).
+			Build()
 	} else {
 		id, err = executor.Send(ctx, message)
 	}
@@ -110,13 +119,6 @@ func (e *Email) Plain() (email *Email) {
 
 func (e *Email) Timeout(timeout time.Duration) (email *Email) {
 	e.timeout = timeout
-	email = e
-
-	return
-}
-
-func (e *Email) Direct() (email *Email) {
-	e.current = constant.ExecutorDirect
 	email = e
 
 	return

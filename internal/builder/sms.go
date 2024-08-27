@@ -2,12 +2,13 @@ package builder
 
 import (
 	"github.com/goexl/qingniao/internal/internal"
-	"github.com/goexl/qingniao/internal/internal/constant"
 	"github.com/goexl/qingniao/internal/internal/executor"
 	"github.com/goexl/qingniao/internal/param"
 )
 
 type Sms struct {
+	base
+
 	params *param.Sender
 	sender *Sender
 	cache  internal.Sms
@@ -15,6 +16,8 @@ type Sms struct {
 
 func NewSms(params *param.Sender, sender *Sender) *Sms {
 	return &Sms{
+		base: newBase(),
+
 		params: params,
 		sender: sender,
 	}
@@ -28,7 +31,7 @@ func (s *Sms) Chuangcache(ak string, sk string) (sms *Sms) {
 }
 
 func (s *Sms) Build() (sender *Sender) {
-	s.sender.sms[constant.ExecutorChuangcache] = s.cache
+	s.sender.sms[s.base.params.Label] = s.cache
 	sender = s.sender
 
 	return
