@@ -44,6 +44,20 @@ func (s *Smtp) Identity(identity string) (direct *Smtp) {
 	return
 }
 
+func (s *Smtp) Username(username string) (direct *Smtp) {
+	s.username = username
+	direct = s
+
+	return
+}
+
+func (s *Smtp) Password(password string) (direct *Smtp) {
+	s.password = password
+	direct = s
+
+	return
+}
+
 func (s *Smtp) Build() (email *Email) {
 	s.email.direct = executor.NewSmtp(s.host, s.port, s.username, s.password, s.identity, s.poolSize, s.logger)
 	email = s.email
