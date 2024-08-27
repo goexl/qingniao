@@ -13,7 +13,7 @@ import (
 )
 
 type Sms struct {
-	base
+	*base[Sms]
 
 	key     string
 	mobiles []string
@@ -23,15 +23,16 @@ type Sms struct {
 	executors map[string]internal.Sms
 }
 
-func NewSms(mobile string, content string, executors map[string]internal.Sms) (sms *Sms) {
-	return &Sms{
-		base: newBase(),
+func NewSms(to string, content string, executors map[string]internal.Sms) (sms *Sms) {
+	sms = new(Sms)
+	sms.base = newBase(sms)
 
-		mobiles: []string{mobile},
-		content: content,
+	sms.mobiles = []string{to}
+	sms.content = content
 
-		executors: executors,
-	}
+	sms.executors = executors
+
+	return
 }
 
 func (s *Sms) AppKey(key string) (sms *Sms) {

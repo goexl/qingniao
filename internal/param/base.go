@@ -1,11 +1,11 @@
 package param
 
-type Core struct {
+type Base struct {
 	Label string
 }
 
-func NewCore() *Core {
-	return &Core{
+func NewBase() *Base {
+	return &Base{
 		Label: "default",
 	}
 }

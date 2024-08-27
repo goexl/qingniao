@@ -12,7 +12,7 @@ import (
 )
 
 type Wechat struct {
-	base
+	*base[Wechat]
 
 	title   string
 	content string
@@ -20,15 +20,16 @@ type Wechat struct {
 	executors map[string]internal.Wechat
 }
 
-func NewWechat(title string, content string, executors map[string]internal.Wechat) *Wechat {
-	return &Wechat{
-		base: newBase(),
+func NewWechat(title string, content string, executors map[string]internal.Wechat) (wechat *Wechat) {
+	wechat = new(Wechat)
+	wechat.base = newBase(wechat)
 
-		title:   title,
-		content: content,
+	wechat.title = title
+	wechat.content = content
 
-		executors: executors,
-	}
+	wechat.executors = executors
+
+	return
 }
 
 func (w *Wechat) Send(ctx context.Context) (id string, status kernel.Status, err error) {

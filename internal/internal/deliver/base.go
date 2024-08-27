@@ -4,19 +4,21 @@ import (
 	"github.com/goexl/qingniao/internal/param"
 )
 
-type base struct {
-	params *param.Core
+type base[T any] struct {
+	params *param.Base
+	t      *T
 }
 
-func newBase() base {
-	return base{
-		params: param.NewCore(),
+func newBase[T any](t *T) *base[T] {
+	return &base[T]{
+		params: param.NewBase(),
+		t:      t,
 	}
 }
 
-func (b *base) Label(label string) (core *base) {
+func (b *base[T]) Label(label string) (t *T) {
 	b.params.Label = label
-	core = b
+	t = b.t
 
 	return
 }

@@ -7,20 +7,21 @@ import (
 )
 
 type Sms struct {
-	base
+	*base[Sms]
 
 	params *param.Sender
 	sender *Sender
 	cache  internal.Sms
 }
 
-func NewSms(params *param.Sender, sender *Sender) *Sms {
-	return &Sms{
-		base: newBase(),
+func NewSms(params *param.Sender, sender *Sender) (sms *Sms) {
+	sms = new(Sms)
+	sms.base = newBase(sms)
 
-		params: params,
-		sender: sender,
-	}
+	sms.params = params
+	sms.sender = sender
+
+	return
 }
 
 func (s *Sms) Chuangcache(ak string, sk string) (sms *Sms) {

@@ -13,7 +13,7 @@ import (
 )
 
 type Email struct {
-	base
+	*base[Email]
 
 	et      constant.EmailType
 	subject string
@@ -28,16 +28,17 @@ type Email struct {
 }
 
 func NewEmail(address string, subject string, content string, executors map[string]internal.Email) (email *Email) {
-	return &Email{
-		base: newBase(),
+	email = new(Email)
+	email.base = newBase(email)
 
-		subject: subject,
-		content: content,
-		to:      []string{address},
-		timeout: 10 * time.Second,
+	email.subject = subject
+	email.content = content
+	email.to = []string{address}
+	email.timeout = 10 * time.Second
 
-		executors: executors,
-	}
+	email.executors = executors
+
+	return
 }
 
 func (e *Email) Send(ctx context.Context) (id string, err error) {

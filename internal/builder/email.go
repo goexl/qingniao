@@ -6,20 +6,21 @@ import (
 )
 
 type Email struct {
-	base
+	*base[Email]
 
 	params *param.Sender
 	sender *Sender
 	direct internal.Email
 }
 
-func NewEmail(params *param.Sender, sender *Sender) *Email {
-	return &Email{
-		base: newBase(),
+func NewEmail(params *param.Sender, sender *Sender) (email *Email) {
+	email = new(Email)
+	email.base = newBase(email)
 
-		params: params,
-		sender: sender,
-	}
+	email.params = params
+	email.sender = sender
+
+	return
 }
 
 func (e *Email) Smtp(host string, port int) *Smtp {

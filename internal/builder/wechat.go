@@ -7,20 +7,21 @@ import (
 )
 
 type Wechat struct {
-	base
+	*base[Wechat]
 
 	params *param.Sender
 	sender *Sender
 	chain  internal.Wechat
 }
 
-func NewWechat(params *param.Sender, sender *Sender) *Wechat {
-	return &Wechat{
-		base: newBase(),
+func NewWechat(params *param.Sender, sender *Sender) (wechat *Wechat) {
+	wechat = new(Wechat)
+	wechat.base = newBase(wechat)
 
-		params: params,
-		sender: sender,
-	}
+	wechat.params = params
+	wechat.sender = sender
+
+	return
 }
 
 func (w *Wechat) Serverchan(key string) (wechat *Wechat) {
