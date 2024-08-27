@@ -34,6 +34,6 @@ func (s Sender) Email(address string, subject string, content string) *deliver.E
 	return deliver.NewEmail(address, subject, content, s.email)
 }
 
-func (s Sender) Sms(mobile string, content string) *deliver.Sms {
+func (s Sender) Sms(mobile string, content string, mobiles ...string) *deliver.Sms {
 	return deliver.NewSms(mobile, content, s.sms)
 }

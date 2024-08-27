@@ -23,11 +23,12 @@ type Sms struct {
 	executors map[string]internal.Sms
 }
 
-func NewSms(to string, content string, executors map[string]internal.Sms) (sms *Sms) {
+func NewSms(mobile string, content string, executors map[string]internal.Sms, mobiles ...string) (sms *Sms) {
 	sms = new(Sms)
 	sms.base = newBase(sms)
 
-	sms.mobiles = []string{to}
+	sms.mobiles = []string{mobile}
+	sms.mobiles = append(sms.mobiles, mobiles...)
 	sms.content = content
 
 	sms.executors = executors

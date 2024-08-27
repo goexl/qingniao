@@ -12,5 +12,5 @@ type Sender interface {
 	Email(address string, subject string, content string) *deliver.Email
 
 	// Sms 发送短信
-	Sms(mobile string, content string) *deliver.Sms
+	Sms(mobile string, content string, mobiles ...string) *deliver.Sms
 }
