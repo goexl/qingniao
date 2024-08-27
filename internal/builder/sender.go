@@ -3,8 +3,9 @@ package builder
 import (
 	"github.com/goexl/http"
 	"github.com/goexl/log"
+	"github.com/goexl/qingniao/internal/core"
 	"github.com/goexl/qingniao/internal/internal"
-	"github.com/goexl/qingniao/internal/internal/core"
+	"github.com/goexl/qingniao/internal/internal/kernel"
 	"github.com/goexl/qingniao/internal/param"
 )
 
@@ -18,6 +19,9 @@ type Sender struct {
 func NewSender() *Sender {
 	return &Sender{
 		params: param.NewSender(),
+		email:  make(map[string]internal.Email),
+		sms:    make(map[string]internal.Sms),
+		wechat: make(map[string]internal.Wechat),
 	}
 }
 
@@ -47,6 +51,6 @@ func (s *Sender) Wechat() *Wechat {
 	return NewWechat(s.params, s)
 }
 
-func (s *Sender) Build() *core.Sender {
-	return core.NewSender(s.email, s.sms, s.wechat)
+func (s *Sender) Build() core.Sender {
+	return kernel.NewSender(s.email, s.sms, s.wechat)
 }
