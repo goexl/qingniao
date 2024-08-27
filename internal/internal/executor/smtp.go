@@ -51,7 +51,7 @@ func (s *Smtp) Send(_ context.Context, deliver *deliver.Email) (id string, err e
 	}
 
 	if nil == s.pool {
-		addr := fmt.Sprintf("%s:%s", s.host, s.port)
+		addr := fmt.Sprintf("%s:%d", s.host, s.port)
 		auth := smtp.PlainAuth(s.identity, s.username, s.password, s.host)
 		s.pool, err = email.NewPool(addr, s.poolSize, auth)
 	}
