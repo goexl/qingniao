@@ -50,7 +50,12 @@ func NewChuangcache(ak string, sk string, http *http.Client, logger log.Logger) 
 }
 
 func (c *Chuangcache) Send(ctx context.Context, deliver *deliver.Sms) (id string, status kernel.Status, err error) {
-	if err = xiren.Struct(deliver); nil != err {
+	if se := xiren.Struct(deliver); nil != se {
+		err = se
+	} else if ce := c.check(deliver.Mobiles); nil != ce {
+		err = ce
+	}
+	if nil != err {
 		return
 	}
 
