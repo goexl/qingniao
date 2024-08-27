@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/goexl/exc"
+	"github.com/goexl/exception"
 	"github.com/goexl/gox"
 	"github.com/goexl/http"
 	"github.com/goexl/log"
@@ -15,7 +16,7 @@ import (
 	"github.com/goexl/qingniao/internal/internal/core"
 	"github.com/goexl/qingniao/internal/internal/executor/chuangcache"
 	"github.com/goexl/qingniao/internal/internal/executor/deliver"
-	internal2 "github.com/goexl/qingniao/internal/kernel"
+	"github.com/goexl/qingniao/internal/kernel"
 
 	"github.com/goexl/gox/field"
 	"github.com/goexl/xiren"
@@ -48,14 +49,14 @@ func NewChuangcache(ak string, sk string, http *http.Client, logger log.Logger) 
 	}
 }
 
-func (c *Chuangcache) Send(ctx context.Context, deliver *deliver.Sms) (id string, status internal2.Status, err error) {
+func (c *Chuangcache) Send(ctx context.Context, deliver *deliver.Sms) (id string, status kernel.Status, err error) {
 	if err = xiren.Struct(deliver); nil != err {
 		return
 	}
 
 	baseReq := &chuangcache.SmsBaseReq{
 		AppKey:  deliver.Key,
-		Mobile:  strings.Join(deliver.Mobiles, ","),
+		Mobile:  strings.ReplaceAll(strings.Join(deliver.Mobiles, ","), "+86", ""),
 		Content: deliver.Content,
 		Time:    fmt.Sprintf("%d", time.Now().UnixNano()/1e6),
 	}
@@ -105,7 +106,7 @@ func (c *Chuangcache) Send(ctx context.Context, deliver *deliver.Sms) (id string
 	// 设置状态
 	switch rsp.Code {
 	case c.code.Success:
-		status = internal2.StatusAccepted
+		status = kernel.StatusAccepted
 		c.logger.Debug("短信已提交到创世云", fields...)
 	case c.code.BadRequest:
 		err = exc.NewException(rsp.Code, "请求参数错误", fields...)
@@ -116,7 +117,7 @@ func (c *Chuangcache) Send(ctx context.Context, deliver *deliver.Sms) (id string
 	case c.code.AppNotfound:
 		err = exc.NewException(rsp.Code, "短信服务不存在", fields...)
 	case c.code.Failed:
-		status = internal2.StatusReject
+		status = kernel.StatusReject
 		c.logger.Warn("短信提交到创世去出错", fields...)
 	case c.code.NoBalance:
 		err = exc.NewException(rsp.Code, "余额不足", fields...)
@@ -154,6 +155,20 @@ func (c *Chuangcache) getToken(ctx context.Context) (token string, err error) {
 		c.token.Code = rsp.Data.AccessToken
 		c.token.ExpiresIn = time.Now().Add(time.Duration(1000 * rsp.Data.ExpiresIn))
 		token = rsp.Data.AccessToken
+	}
+
+	return
+}
+
+func (c *Chuangcache) check(mobiles []string) (err error) {
+	banlist := make([]string, 0)
+	for _, mobile := range mobiles {
+		if !strings.HasPrefix(mobile, constant.MobileChinaPrefix) {
+			banlist = append(banlist, mobile)
+		}
+	}
+	if 0 != len(banlist) {
+		err = exception.New().Message("不支持除中国以外的手机号发送短信").Field(field.New("mobiles", banlist)).Build()
 	}
 
 	return
