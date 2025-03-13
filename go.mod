@@ -1,7 +1,6 @@
 module github.com/goexl/qingniao
 
 go 1.23
-
 require (
 	github.com/goexl/exc v0.0.5
 	github.com/goexl/exception v0.0.3
@@ -20,8 +19,8 @@ require (
 	github.com/go-resty/resty/v2 v2.15.3 // indirect
 	github.com/goexl/baozheng v0.0.1 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/crypto v0.35.0 // indirect
+	golang.org/x/net v0.36.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/text v0.22.0 // indirect
 )
