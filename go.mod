@@ -10,7 +10,7 @@ require (
 	github.com/goexl/gox v1.9.2
 	github.com/goexl/http v0.2.1
 	github.com/goexl/log v0.1.0
-	github.com/goexl/xiren v0.0.8
+	github.com/goexl/xiren v0.0.9
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 )
 
