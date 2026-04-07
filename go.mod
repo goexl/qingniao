@@ -6,7 +6,7 @@ require (
 	github.com/goexl/exc v0.0.5
 	github.com/goexl/exception v0.0.4
 	github.com/goexl/gox v1.9.2
-	github.com/goexl/http v0.3.0
+	github.com/goexl/http v0.3.1
 	github.com/goexl/log v0.1.0
 	github.com/goexl/xiren v0.0.9
 	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
