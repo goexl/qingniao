@@ -1,11 +1,11 @@
 module github.com/goexl/qingniao
 
-go 1.25.0
+go 1.27
 
 require (
 	github.com/goexl/exc v0.0.5
 	github.com/goexl/exception v0.0.4
-	github.com/goexl/gox v1.9.2
+	github.com/goexl/gox v1.9.3
 	github.com/goexl/http v0.3.4
 	github.com/goexl/log v0.1.0
 	github.com/goexl/xiren v0.0.9
